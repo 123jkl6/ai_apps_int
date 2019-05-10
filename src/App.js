@@ -1,36 +1,36 @@
 import React, { Component } from 'react';
 
-import logo from './logo.svg';
 import './App.css';
 import { connect } from 'react-redux';
 
+import { addTodo } from './actions/todoActions';
+import store from './store';
+import {CreateTodo} from './containers/CreateTodo';
+import {DisplayTodo} from './containers/DisplayTodo';
 
 class App extends Component {
   constructor(props){
     super(props);
+    console.log(props);
+
     this.state = {
-      currentId : 1 ,
-      todos : [],
+      createToDo:false,
+      editTodo : {
+
+      }
     }
   }
 
   render(){
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div>
+        
+        {this.state.createTodo ? <CreateTodo addTodo={this.props.addTodo.bind(this)} closeTodo={this.closeCreateTodoModal.bind(this)} /> : null}
+        <button onClick={this.showCreateTodoModal.bind(this)} className="btn btn-primary btn-large" >
+          Create to Todo
+        </button>
+        {this.state.currentId}
+        <DisplayTodo todos={this.props.todoState.todos} />
       </div>
     );
   }
@@ -38,6 +38,20 @@ class App extends Component {
   componentDidMount(){
     console.log('componentDidMount()');
     console.log(this.state);
+    console.log(this.props.store);
+  }
+
+  editTodo(todo){
+    this.showCreateTodoModal();
+    this.setState({editTodo:todo});
+  }
+
+  showCreateTodoModal(){
+    this.setState({createTodo:true});
+  }
+
+  closeCreateTodoModal(){
+    this.setState({createTodo:false});
   }
 
 }
@@ -45,30 +59,17 @@ class App extends Component {
 const mapStateToProps = (state) => {
   console.log(state);
   return {
-    todoState:state
+    todoState:state.reducer,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
+  
   return {
-    ADD : (state) => {
-      dispatch({
-        type:"ADD",
-        payload:state,
-      });
-    },
-    UPDATE : (state) => {
-      dispatch({
-        type:"ADD",
-        payload:state,
-      });
-    },
-    DELETE : (state) => {
-      dispatch({
-        type:"ADD",
-        payload:state,
-      });
-    },
+    addTodo : (todo) => {
+      console.log(todo);
+      dispatch(addTodo(todo));
+    }
   }
 }
 

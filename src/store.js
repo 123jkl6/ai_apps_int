@@ -1,23 +1,35 @@
-import { createStore } from 'redux';
+import { createStore, combineReducers } from 'redux';
 
 const initialState = {
     currentId : 1,
-    todos : []
+    todos : [],
+    lastValues : [],
 };
 
+console.log('creating store');
 const localStorageState = localStorage.getItem('todoState');
-if (localStorageState) {
-    var localStorageStateObj = JSON.parse(localStorageState);
-    if (localStorageState.currentId && localStorageStateObj.todos){
+if (localStorageState){
+    const localStorageStateObj = JSON.parse(localStorageState);
+    if (localStorageStateObj.currentId && localStorageStateObj.todos){
         initialState.currentId = localStorageStateObj.currentId;
         initialState.todos = localStorageStateObj.todos;
     }
-} 
+}
 
 const reducer = (state = initialState, action) => {
+    //console.log(state);
     switch (action.type) {
         case "ADD": {
-            return state;
+            const newPayload = action.payload;
+            newPayload.id = state.currentId;
+            const newState = {
+                currentId:state.currentId+1,
+                todos:[...state.todos,newPayload],
+                lastValues : [...state.lastValues,]
+            };
+            localStorage.setItem('todoState',JSON.stringify(newState));
+            return newState;
+           
         }
         case "UPDATE": {
             return state;
@@ -25,7 +37,10 @@ const reducer = (state = initialState, action) => {
         case "DELETE": {
             return state;
         }
+        default : {
+            return state;
+        }
     }
 }
 
-export default createStore(reducer);
+export default createStore(combineReducers({reducer}));

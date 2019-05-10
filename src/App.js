@@ -27,7 +27,7 @@ class App extends Component {
         
         {this.state.createTodo ? <CreateTodo addTodo={this.props.addTodo.bind(this)} closeTodo={this.closeCreateTodoModal.bind(this)} /> : null}
         <button onClick={this.showCreateTodoModal.bind(this)} className="btn btn-primary btn-large" >
-          Create to Todo
+          New Todo
         </button>
         {this.state.currentId}
         <DisplayTodo todos={this.props.todoState.todos} />

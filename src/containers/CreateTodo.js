@@ -9,22 +9,28 @@ export class CreateTodo extends React.Component {
             summary: '',
             date: '',
             time: '',
+            hour: '',
+            minute: '',
             submitted: false,
             validTitle: false,
             validSummary: false,
             validDate: false,
             validTime: false,
+            validHour: false,
+            validMinute: false,
         }
 
         this.handleTitle = this.handleTitle.bind(this);
         this.handleSummary = this.handleSummary.bind(this);
         this.handleDate = this.handleDate.bind(this);
         this.handleTime = this.handleTime.bind(this);
+        this.handleHour = this.handleHour.bind(this);
+        this.handleMinute = this.handleMinute.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleTitle(event) {
-        this.setState({ title: event.target.value, titleDirty: true });
+        this.setState({ title: event.target.value });
         if (!event.target.value) {
             this.setState({ validTitle: false });
         }
@@ -35,7 +41,7 @@ export class CreateTodo extends React.Component {
     }
 
     handleSummary(event) {
-        this.setState({ summary: event.target.value, summaryDirty: true });
+        this.setState({ summary: event.target.value });
         if (!event.target.value) {
             this.setState({ validSummary: false });
         }
@@ -45,7 +51,13 @@ export class CreateTodo extends React.Component {
     }
 
     handleDate(event) {
-        this.setState({ date: event.target.value });
+        this.setState({ date: event.target.value});
+        if (event.target.value){
+            this.setState({ validDate: true});
+        } else {
+            this.setState({validDate:false});
+        }
+        
     }
 
     handleTime(event) {
@@ -59,19 +71,44 @@ export class CreateTodo extends React.Component {
 
     }
 
+    handleHour(event) {
+
+        if (event.target.value < 0 || event.target.value > 23 ||
+            !event.target.value.match(/[0-9]/)) {
+            this.setState({ hour: '' , validHour:false });
+            return;
+        }
+
+        this.setState({ hour: event.target.value, validHour: true });
+
+    }
+
+    handleMinute(event) {
+
+        if (event.target.value < 0 || event.target.value > 59 ||
+            !event.target.value.match(/[0-9]/)) {
+            this.setState({ minute: '', validMinute:false });
+            return;
+        }
+
+        this.setState({ minute: event.target.value, validMinute: true });
+        console.log(this.state);
+    }
+
     handleSubmit(event) {
         this.setState({ submitted: true });
-
-        if (this.state.time.length == 4) {
-            this.setState({ validTime: true });
-        }
-
-        if (this.state.date) {
-            this.setState({ validDate: true });
-        }
-
-        if (this.state.validTitle && this.state.validSummary && this.state.validTime && this.state.validDate) {
-            this.props.addTodo(this.state);
+        console.log(this.state);
+        if (this.state.validTitle && this.state.validSummary && this.state.validHour && this.state.validMinute && this.state.date) {
+            //reconcile hour and minute by concatenating. 
+            var hourString = this.state.hour.length == 2 ? this.state.hour : "0" + this.state.hour;
+            var minuteString = this.state.minute.length == 2 ? this.state.minute : "0" + this.state.minute;
+            //setState is asynchronous. 
+            this.setState({ time: hourString + minuteString },function(){
+                console.log(this.state);
+                this.props.addTodo(this.state);
+                this.props.closeTodo();
+            });
+            
         }
         else {
             event.preventDefault();
@@ -85,7 +122,10 @@ export class CreateTodo extends React.Component {
                 <form className="container add-padding form-width">
 
                     <div className="row">
-                        <span onClick={this.props.closeTodo} className="pull-right btn btn-danger">&times;</span>
+                        <div className="col-11"></div>
+                        <div className="col-1">
+                            <span onClick={this.props.closeTodo} className="pull-right btn btn-danger">&times;</span>
+                        </div>
                     </div>
                     <div className="form-group" >
                         <div className="row">
@@ -113,24 +153,23 @@ export class CreateTodo extends React.Component {
                     </div>
 
                     <div className="form-group">
-                        <div className="row">
-                            <label htmlFor="time" className={(!this.state.validTime && this.state.submitted ? 'text-danger' : '')}>Time 24H format</label>
-                            <input id="time" className="form-control" maxLength="4" value={this.state.time} onChange={this.handleTime} />
-                            {!this.state.validTime && this.state.submitted ? <span className="text-danger">Time is required and has to be in 24H format. </span> : ''}
+                        <div className="row" >
+                            <div className="col" >
+                                <label htmlFor="hour" className={(!this.state.validHour && this.state.submitted ? 'text-danger' : '')} >Hour</label>
+                                <input id="hour" className="form-control" maxLength="2" value={this.state.hour} onChange={this.handleHour} />
+                                {!this.state.validHour && this.state.submitted ? <span className="text-danger">Hour is required and has to be 0 to 23. </span> : ''}
+                            </div>
+                            <div className="col">
+                                <label htmlFor="minute" className={(!this.state.validMinute && this.state.submitted ? 'text-danger' : '')} >Minute</label>
+                                <input id="minute" className="form-control" maxLength="2" value={this.state.minute} onChange={this.handleMinute} />
+                                {!this.state.validMinute && this.state.submitted ? <span className="text-danger">Minute is required and has to be 0 to 59. </span> : ''}
+                            </div>
                         </div>
                     </div>
 
                     <div className="form-group">
                         <div className="row">
-                            <label htmlFor="time" className={(!this.state.validTime && this.state.submitted ? 'text-danger' : '')}>Time 24H format</label>
-                            <input id="time" className="form-control" maxLength="4" value={this.state.time} onChange={this.handleTime} />
-                            {!this.state.validTime && this.state.submitted ? <span className="text-danger">Time is required and has to be in 24H format. </span> : ''}
-                        </div>
-                    </div>
-
-                    <div className="form-group">
-                        <div className="row">
-                            <button className="btn btn-lg btn-primary" onClick={this.handleSubmit}>Create</button>
+                            <button className="btn btn-lg btn-primary" type="button" onClick={this.handleSubmit}>Create</button>
                         </div>
                     </div>
 

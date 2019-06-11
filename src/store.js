@@ -17,7 +17,7 @@ if (localStorageState){
 }
 
 const reducer = (state = initialState, action) => {
-    //console.log(state);
+    console.log(state);
     switch (action.type) {
         case "ADD": {
             const newPayload = action.payload;

@@ -107,8 +107,16 @@ export class CreateTodo extends React.Component {
                     <div className="form-group">
                         <div className="row">
                             <label htmlFor="date" className={(!this.state.validDate && this.state.submitted ? 'text-danger' : '')}>Date </label>
-                            <input type="date" id="date" value={this.state.date} onChange={this.handleDate} />
+                            <input type="date" id="date" className="form-control" value={this.state.date} onChange={this.handleDate} />
                             {!this.state.validDate && this.state.submitted ? <span className="text-danger">Date is required. </span> : ''}
+                        </div>
+                    </div>
+
+                    <div className="form-group">
+                        <div className="row">
+                            <label htmlFor="time" className={(!this.state.validTime && this.state.submitted ? 'text-danger' : '')}>Time 24H format</label>
+                            <input id="time" className="form-control" maxLength="4" value={this.state.time} onChange={this.handleTime} />
+                            {!this.state.validTime && this.state.submitted ? <span className="text-danger">Time is required and has to be in 24H format. </span> : ''}
                         </div>
                     </div>
 

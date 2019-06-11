@@ -14,7 +14,7 @@ export const DisplayTodo = (props) => {
     }
 
     return (
-        <div className="display-todo">
+        <div className="display-todo" >
             <h2 style={{'padding-bottom':'5%'}}>Todos</h2>
             {displayTodos}
         </div>

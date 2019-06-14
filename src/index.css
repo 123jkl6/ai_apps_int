@@ -13,7 +13,7 @@ body {
 }
 
 #createTodoForm{
-  position:fixed;
+  position:relative;
   width:100%;
   height:100%;
   background-color:#909090;
@@ -49,4 +49,9 @@ body {
 .display-todo{
   margin-left:5%;
   margin-right:5%;
+  padding-bottom:5%;
+}
+
+.status-control{
+  width:200px;
 }

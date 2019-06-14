@@ -11,6 +11,10 @@ export class CreateTodo extends React.Component {
             time: '',
             hour: '',
             minute: '',
+            oneLabel: "",
+            labels: [],
+            status: "",
+            attachments: [],
             submitted: false,
             validTitle: false,
             validSummary: false,
@@ -22,11 +26,18 @@ export class CreateTodo extends React.Component {
 
         this.handleTitle = this.handleTitle.bind(this);
         this.handleSummary = this.handleSummary.bind(this);
+        this.handleLabel = this.handleLabel.bind(this);
+        this.removeLabel = this.removeLabel.bind(this);
+        this.handleEnterAtLabel = this.handleEnterAtLabel.bind(this);
         this.handleDate = this.handleDate.bind(this);
         this.handleTime = this.handleTime.bind(this);
         this.handleHour = this.handleHour.bind(this);
         this.handleMinute = this.handleMinute.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleFile = this.handleFile.bind(this);
+        this.removeFile = this.removeFile.bind(this);
+
+        this.fileInput = React.createRef();
     }
 
     handleTitle(event) {
@@ -50,14 +61,46 @@ export class CreateTodo extends React.Component {
         }
     }
 
-    handleDate(event) {
-        this.setState({ date: event.target.value});
-        if (event.target.value){
-            this.setState({ validDate: true});
-        } else {
-            this.setState({validDate:false});
+    handleLabel(event) {
+        //console.log(event.key);
+        //event.key is undefined here 
+        // if (event.key == 'Enter'){
+        //     event.preventDefault();
+        // }
+        this.setState({ oneLabel: event.target.value });
+    }
+
+    removeLabel(key){
+        console.log(key);
+        const oldLabels = this.state.labels;
+        const newLabels = [];
+        for (var oneLabelIdx in oldLabels){
+            if (oneLabelIdx != key){
+                newLabels.push(oldLabels[oneLabelIdx]);
+            }
         }
-        
+        this.setState({labels:newLabels});
+    }
+
+    handleEnterAtLabel(event) {
+        //if hit enter, add labels and don't submit form, otherwise, submit form.
+        if (event.key == 'Enter' && event.target.value) {
+            //don't submit form
+            event.preventDefault();
+            if (!this.state.labels.includes(this.state.oneLabel) && this.state.oneLabel) {
+                this.setState({ labels: [...this.state.labels, this.state.oneLabel] });
+            }
+        }
+    }
+
+    handleDate(event) {
+        this.setState({ date: event.target.value });
+        if (event.target.value) {
+            this.setState({ validDate: true });
+        } else {
+            this.setState({ validDate: false });
+        }
+
     }
 
     handleTime(event) {
@@ -75,7 +118,7 @@ export class CreateTodo extends React.Component {
 
         if (event.target.value < 0 || event.target.value > 23 ||
             !event.target.value.match(/[0-9]/)) {
-            this.setState({ hour: '' , validHour:false });
+            this.setState({ hour: '', validHour: false });
             return;
         }
 
@@ -87,12 +130,52 @@ export class CreateTodo extends React.Component {
 
         if (event.target.value < 0 || event.target.value > 59 ||
             !event.target.value.match(/[0-9]/)) {
-            this.setState({ minute: '', validMinute:false });
+            this.setState({ minute: '', validMinute: false });
             return;
         }
 
         this.setState({ minute: event.target.value, validMinute: true });
         console.log(this.state);
+    }
+
+    handleFile(event) {
+        console.log(event.target.value);
+        const files = this.fileInput.current.files;
+        console.log(this.fileInput.current.files);
+        this.convertFile(files[0]).then((fileObj)=>{
+            this.setState({ attachments: [...this.state.attachments, fileObj] },() => { console.log(this.state); });
+        });
+    }
+
+    convertFile(file){
+        return new Promise((resolve,reject)=>{
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+              console.log(reader.result);
+              var oneFile = reader.result;
+              resolve({
+                  name: file.name,
+                  content:oneFile.split(",")[1],
+              });
+            };
+            reader.onerror = function (error) {
+              console.log('Error: ', error);
+              reject(error);
+            };
+        });
+    }
+
+    removeFile(key){
+        console.log(key);
+        const oldFiles = this.state.attachments;
+        const newFiles = [];
+        for (var oneFileIdx in oldFiles){
+            if (oneFileIdx != key){
+                newFiles.push(oldFiles[oneFileIdx]);
+            }
+        }
+        this.setState({attachments:newFiles});
     }
 
     handleSubmit(event) {
@@ -103,14 +186,24 @@ export class CreateTodo extends React.Component {
             var hourString = this.state.hour.length == 2 ? this.state.hour : "0" + this.state.hour;
             var minuteString = this.state.minute.length == 2 ? this.state.minute : "0" + this.state.minute;
             //setState is asynchronous. 
-            this.setState({ time: hourString + minuteString },function(){
+            this.setState({ time: hourString + minuteString }, function () {
                 console.log(this.state);
-                this.props.addTodo(this.state);
+
+                this.props.addTodo({
+                    title: this.state.title,
+                    summary: this.state.summary,
+                    labels: this.state.labels,
+                    date: this.state.date,
+                    time: this.state.time,
+                    status: "Not Started",
+                    attachments:this.state.attachments,
+                });
                 this.props.closeTodo();
             });
-            
+
         }
         else {
+            //pointless to have if button type is no longer "submit"
             event.preventDefault();
         }
 
@@ -139,10 +232,30 @@ export class CreateTodo extends React.Component {
                     <div className="form-group">
                         <div className="row">
                             <label htmlFor="summary" className={(!this.state.validSummary && this.state.submitted ? 'text-danger' : '')}>Summary </label>
-                            <input id="summary" className="form-control" value={this.state.summary} onChange={this.handleSummary} />
+                            <textarea id="summary" className="form-control" value={this.state.summary} onChange={this.handleSummary} ></textarea>
                             {!this.state.validSummary && this.state.submitted ? <span className="text-danger">Summary is required. </span> : ''}
                         </div>
                     </div>
+
+
+                    <div className="form-group">
+                        <div className="row">
+                            <label htmlFor="labels" >
+                                Labels
+                            </label>
+                            <input id="labels" className="form-control" value={this.state.oneLabel} onChange={this.handleLabel} onKeyDown={this.handleEnterAtLabel} />
+                        </div>
+                    </div>
+
+                    <ul>
+                        {this.state.labels.map((item, key) => {
+                            return (
+                                <li className="row" key={key}>
+                                    <span className="col-10">{item}</span><span className="btn bg-danger" onClick={()=>{this.removeLabel(key);}}>&times; </span>
+                                </li>
+                            );
+                        })}
+                    </ul>
 
                     <div className="form-group">
                         <div className="row">
@@ -153,6 +266,9 @@ export class CreateTodo extends React.Component {
                     </div>
 
                     <div className="form-group">
+                        <div className="row">
+                            Due
+                        </div>
                         <div className="row" >
                             <div className="col" >
                                 <label htmlFor="hour" className={(!this.state.validHour && this.state.submitted ? 'text-danger' : '')} >Hour</label>
@@ -166,10 +282,28 @@ export class CreateTodo extends React.Component {
                             </div>
                         </div>
                     </div>
+                    
+                    <div className="form-group">
+                        <div className="col">
+                            <label htmlFor="attachment">
+                                <input type="file" id="file" className="form-control" ref={this.fileInput} onChange={this.handleFile} />
+                            </label>
+                        </div>
+                    </div>
+
+                    <ul>
+                        {this.state.attachments.map((item, key) => {
+                            return (
+                                <li className="row" key={key}>
+                                    <span className="col-10">{item.name}</span><span className="btn bg-danger" onClick={()=>{this.removeFile(key)}}>&times; </span>
+                                </li>
+                            );
+                        })}
+                    </ul>
 
                     <div className="form-group">
                         <div className="row">
-                            <button className="btn btn-lg btn-primary" type="button" onClick={this.handleSubmit}>Create</button>
+                            <button className="btn btn-lg btn-primary" type="submit" onClick={this.handleSubmit}>Create</button>
                         </div>
                     </div>
 

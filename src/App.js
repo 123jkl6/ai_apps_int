@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import './App.css';
 import { connect } from 'react-redux';
 
-import { addTodo } from './actions/todoActions';
+import { addTodo, updateTodo, deleteTodo } from './actions/todoActions';
 import store from './store';
 import {CreateTodo} from './containers/CreateTodo';
 import {DisplayTodo} from './containers/DisplayTodo';
@@ -30,7 +30,7 @@ class App extends Component {
           New
         </button>
         {this.state.currentId}
-        <DisplayTodo todos={this.props.todoState.todos} />
+        <DisplayTodo updateTodo={this.props.updateTodo.bind(this)} deleteTodo={this.props.deleteTodo.bind(this)} todos={this.props.todoState.todos} />
       </div>
     );
   }
@@ -69,6 +69,14 @@ const mapDispatchToProps = (dispatch) => {
     addTodo : (todo) => {
       console.log(todo);
       dispatch(addTodo(todo));
+    },
+    updateTodo : (todo) => {
+      console.log(todo);
+      dispatch(updateTodo(todo));
+    },
+    deleteTodo : (todo) => {
+      console.log(todo);
+      dispatch(deleteTodo(todo));
     }
   }
 }

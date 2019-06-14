@@ -10,9 +10,10 @@ console.log('creating store');
 const localStorageState = localStorage.getItem('todoState');
 if (localStorageState){
     const localStorageStateObj = JSON.parse(localStorageState);
-    if (localStorageStateObj.currentId && localStorageStateObj.todos){
+    if (localStorageStateObj.currentId && localStorageStateObj.todos && localStorageStateObj.lastValues){
         initialState.currentId = localStorageStateObj.currentId;
         initialState.todos = localStorageStateObj.todos;
+        initialState.lastValues = localStorageStateObj.lastValues;
     }
 }
 
@@ -24,21 +25,65 @@ const reducer = (state = initialState, action) => {
             newPayload.id = state.currentId;
             const newState = {
                 currentId:state.currentId+1,
-                todos:[...state.todos,newPayload],
-                lastValues : [...state.lastValues,]
+                todos:[...state.todos,newPayload,],
+                lastValues : [...state.todos,],
             };
             localStorage.setItem('todoState',JSON.stringify(newState));
             return newState;
            
         }
-        case "UPDATE": {
-            return state;
+        case "UPDATE_TODO": {
+            const newPayload = action.payload;
+            const oldTodos = state.todos;
+            const newTodos = [];
+            for (var oneTodo of oldTodos){
+                if (oneTodo.id==newPayload.id){
+                    const updatedTodo = {
+                        // might need to change with attachment implementations. 
+                        ...newPayload
+                    };
+                    newTodos.push(updatedTodo);
+                } else  {
+                    //BAU
+                    newTodos.push(oneTodo);
+                }
+            }
+            const newState = {
+                currentId : state.currentId,
+                todos : [...newTodos],
+                lastValues : [state.todos,],
+            };
+            //persist to localStorage first
+            localStorage.setItem('todoState',JSON.stringify(newState));
+            return newState;
         }
         case "DELETE": {
-            return state;
+            //immutability is a good practice
+            const oldTodos = state.todos;
+            const newTodos = [];
+
+            for (var todoIdx in oldTodos){
+                //add
+                if (action.payload.id != oldTodos[todoIdx].id){
+                    const oneTodo = {...oldTodos[todoIdx]};
+                    newTodos.push(oneTodo);
+                }
+            }
+
+            const newState = {
+                currentId : state.currentId,
+                todos : [...newTodos],
+                lastValues : [state.todos,],
+            };
+            localStorage.setItem('todoState',JSON.stringify(newState));
+            return newState;
         }
         default : {
-            return state;
+            //immutability is a good practice
+            const newState = {
+                ...state,
+            };
+            return newState;
         }
     }
 }

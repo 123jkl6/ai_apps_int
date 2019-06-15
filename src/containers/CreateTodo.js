@@ -4,24 +4,27 @@ export class CreateTodo extends React.Component {
 
     constructor(props) {
         super(props);
+
+        let editTodo = props.editTodo;
+
         this.state = {
-            title: '',
-            summary: '',
-            date: '',
+            title: editTodo?editTodo.title:'',
+            summary: editTodo?editTodo.summary:'',
+            date: editTodo?editTodo.date:'',
             time: '',
-            hour: '',
-            minute: '',
+            hour: editTodo?editTodo.time[0]+editTodo.time[1]:'',
+            minute: editTodo?editTodo.time[3]+editTodo.time[4]:'',
             oneLabel: "",
-            labels: [],
-            status: "",
-            attachments: [],
+            labels: editTodo?[...editTodo.labels]:[],
+            status: editTodo?editTodo.status:"",
+            attachments: editTodo?[...editTodo.attachments]:[],
             submitted: false,
-            validTitle: false,
-            validSummary: false,
-            validDate: false,
-            validTime: false,
-            validHour: false,
-            validMinute: false,
+            validTitle: editTodo?true:false,
+            validSummary: editTodo?true:false,
+            validDate: editTodo?true:false,
+            //validTime: editTodo?true:false,
+            validHour: editTodo?true:false,
+            validMinute: editTodo?true:false,
         }
 
         this.handleTitle = this.handleTitle.bind(this);
@@ -30,7 +33,7 @@ export class CreateTodo extends React.Component {
         this.removeLabel = this.removeLabel.bind(this);
         this.handleEnterAtLabel = this.handleEnterAtLabel.bind(this);
         this.handleDate = this.handleDate.bind(this);
-        this.handleTime = this.handleTime.bind(this);
+        //this.handleTime = this.handleTime.bind(this);
         this.handleHour = this.handleHour.bind(this);
         this.handleMinute = this.handleMinute.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -41,8 +44,9 @@ export class CreateTodo extends React.Component {
     }
 
     handleTitle(event) {
-        this.setState({ title: event.target.value });
-        if (!event.target.value) {
+        const input = event.target.value;
+        this.setState({ title: input });
+        if (!input.trim()) {
             this.setState({ validTitle: false });
         }
         else {
@@ -52,8 +56,9 @@ export class CreateTodo extends React.Component {
     }
 
     handleSummary(event) {
-        this.setState({ summary: event.target.value });
-        if (!event.target.value) {
+        const input = event.target.value;
+        this.setState({ summary: input });
+        if (!input.trim()) {
             this.setState({ validSummary: false });
         }
         else {
@@ -67,7 +72,7 @@ export class CreateTodo extends React.Component {
         // if (event.key == 'Enter'){
         //     event.preventDefault();
         // }
-        this.setState({ oneLabel: event.target.value });
+        this.setState({ oneLabel: event.target.value,validLabel:true });
     }
 
     removeLabel(key){
@@ -83,12 +88,13 @@ export class CreateTodo extends React.Component {
     }
 
     handleEnterAtLabel(event) {
+        const input = event.target.value.trim(); 
         //if hit enter, add labels and don't submit form, otherwise, submit form.
-        if (event.key == 'Enter' && event.target.value) {
+        if (event.key == 'Enter' && input) {
             //don't submit form
             event.preventDefault();
-            if (!this.state.labels.includes(this.state.oneLabel) && this.state.oneLabel) {
-                this.setState({ labels: [...this.state.labels, this.state.oneLabel] });
+            if (!this.state.labels.includes(this.state.oneLabel.trim()) && this.state.oneLabel.trim()) {
+                this.setState({ labels: [...this.state.labels, this.state.oneLabel.trim()] });
             }
         }
     }
@@ -103,16 +109,16 @@ export class CreateTodo extends React.Component {
 
     }
 
-    handleTime(event) {
+    // handleTime(event) {
 
-        if (event.target.value < 0 || event.target.value > 2400 || !event.target.value.match(/[0-9]/)) {
-            this.setState({ time: '' });
-            return;
-        }
+    //     if (event.target.value < 0 || event.target.value > 2400 || !event.target.value.match(/[0-9]/)) {
+    //         this.setState({ time: '' });
+    //         return;
+    //     }
 
-        this.setState({ time: event.target.value, validTime: true });
+    //     this.setState({ time: event.target.value, validTime: true });
 
-    }
+    // }
 
     handleHour(event) {
 
@@ -156,7 +162,7 @@ export class CreateTodo extends React.Component {
               var oneFile = reader.result;
               resolve({
                   name: file.name,
-                  content:oneFile.split(",")[1],
+                  content:oneFile,
               });
             };
             reader.onerror = function (error) {
@@ -188,16 +194,29 @@ export class CreateTodo extends React.Component {
             //setState is asynchronous. 
             this.setState({ time: hourString + minuteString }, function () {
                 console.log(this.state);
-
-                this.props.addTodo({
-                    title: this.state.title,
-                    summary: this.state.summary,
-                    labels: this.state.labels,
-                    date: this.state.date,
-                    time: this.state.time,
-                    status: "Not Started",
-                    attachments:this.state.attachments,
-                });
+                
+                if (this.props.editTodo){
+                    this.props.updateTodo({
+                        id:this.props.editTodo.id,
+                        title: this.state.title.trim(),
+                        summary: this.state.summary.trim(),
+                        labels: this.state.labels,
+                        date: this.state.date,
+                        time: this.state.time,
+                        status: this.props.editTodo?this.props.editTodo.status:"Not Started",
+                        attachments:this.state.attachments,
+                    });
+                } else {
+                    this.props.addTodo({
+                        title: this.state.title.trim(),
+                        summary: this.state.summary.trim(),
+                        labels: this.state.labels,
+                        date: this.state.date,
+                        time: this.state.time,
+                        status: "Not Started",
+                        attachments:this.state.attachments,
+                    });
+                }
                 this.props.closeTodo();
             });
 
@@ -244,6 +263,7 @@ export class CreateTodo extends React.Component {
                                 Labels
                             </label>
                             <input id="labels" className="form-control" value={this.state.oneLabel} onChange={this.handleLabel} onKeyDown={this.handleEnterAtLabel} />
+                            
                         </div>
                     </div>
 
@@ -303,7 +323,7 @@ export class CreateTodo extends React.Component {
 
                     <div className="form-group">
                         <div className="row">
-                            <button className="btn btn-lg btn-primary" type="submit" onClick={this.handleSubmit}>Create</button>
+                            <button className="btn btn-lg btn-primary" type="submit" onClick={this.handleSubmit}>{this.props.editTodo?'Edit':'Create'}</button>
                         </div>
                     </div>
 

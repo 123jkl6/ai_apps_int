@@ -18,3 +18,17 @@ export function deleteTodo(todo) {
         payload: todo,
     };
 }
+
+export function filterTodo(searchTerm){
+    return {
+        type:"FILTER",
+        payload:searchTerm,
+    };
+}
+
+export function sortTodos(sortType){
+    return {
+        type:"SORT",
+        payload:sortType,
+    }
+}

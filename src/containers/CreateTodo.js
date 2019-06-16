@@ -41,7 +41,7 @@ class CreateTodo extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleFile = this.handleFile.bind(this);
         this.removeFile = this.removeFile.bind(this);
-
+        this.closeForm = this.closeForm.bind(this);
         this.fileInput = React.createRef();
     }
 
@@ -237,6 +237,10 @@ class CreateTodo extends React.Component {
 
     }
 
+    closeForm(){
+        this.props.history.goBack();
+    }
+
     render() {
         return (
             <div id="createTodoForm">
@@ -245,9 +249,9 @@ class CreateTodo extends React.Component {
                     <div className="row">
                         <div className="col-11"></div>
                         <div className="col-1">
-                            <Link to={this.props.editTodo?"/todo/"+this.props.editTodo.id:"/"}>
-                                <span className="pull-right btn btn-danger">&times;</span>
-                            </Link>
+                            
+                                <span className="pull-right btn btn-danger" onClick={()=>{this.closeForm()}}>&times;</span>
+                            
                         </div>
                     </div>
                     <div className="form-group" >

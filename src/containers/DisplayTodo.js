@@ -6,6 +6,83 @@ import { OneRowTodo } from './OneRowTodo';
 export const DisplayTodo = (props) => {
     const displayTodos = [];
 
+    const sortType = props.sortType?{...props.sortType}:null;
+    let idClass = "";
+    let titleClass = "";
+    let dateClass = "";
+    let favClass = "";
+    if (sortType){
+      switch (sortType.sort){
+        case "ID" : {
+          if (sortType.order==="DESC"){
+            idClass = "fas fa-arrow-down"
+          } else {
+            idClass = "fas fa-arrow-up"
+          }
+          break;
+        }
+        case "Title" : {
+          if (sortType.order==="DESC"){
+            titleClass = "fas fa-arrow-down"
+          } else {
+            titleClass = "fas fa-arrow-up"
+          }
+          break;
+        }
+        case "Date" : {
+          if (sortType.order==="DESC"){
+            dateClass = "fas fa-arrow-down"
+          } else {
+            dateClass = "fas fa-arrow-up"
+          }
+          break;
+        }
+        case "Fav" :{
+          if (sortType.order==="YES"){
+            favClass="bg-success"
+          } else {
+            favClass="";
+          }
+          break;
+        }
+        default : {
+          //ID ASC
+          idClass ="fas fa-arrow-up";
+          break;
+        }
+      }
+    } else {
+      idClass ="fas fa-arrow-up";
+    }
+
+    const sendSortType = (sort,classNameString)=>{
+      //catch fav first
+      if (sort=="Fav"){
+        if (!classNameString) {
+          return {
+            sort:sort,
+            order:"YES",
+          };
+        } else {
+          return {
+            sort:sort,
+            order:"NO",
+          };
+        }
+      }
+      if (classNameString.includes("down") || !classNameString){
+        return {
+          sort: sort,
+          order:"ASC",
+        };
+      } else {
+        return {
+          sort: sort,
+          order:"DESC",
+        };
+      }
+    };
+
     for (var todoIdx in props.todos){
         displayTodos.push(
             <div key={todoIdx} >
@@ -36,17 +113,17 @@ export const DisplayTodo = (props) => {
               </Link>
             </div>
             <div className="row">
-              <span className="btn col-2">
-                ID
+              <span className="btn col-2" onClick={()=>{props.sortTodos(sendSortType("ID",idClass));}}>
+                ID  <i className={idClass}></i>
               </span>
-              <span className="btn col">
-                Title
+              <span className="btn col" onClick={()=>{props.sortTodos(sendSortType("Title",titleClass));}}>
+                Title <i className={titleClass}></i>
               </span>
-              <span className="btn col-2">
-                Date
+              <span className="btn col-2" onClick={()=>{props.sortTodos(sendSortType("Date",dateClass));}}>
+                Date <i className={dateClass}></i>
               </span>
-              <span className="btn col-1">
-                Fav
+              <span className={"btn col-1 "+favClass} onClick={()=>{props.sortTodos(sendSortType("Fav",favClass));}}>
+                Fav 
               </span>
             </div>
             {displayTodos}

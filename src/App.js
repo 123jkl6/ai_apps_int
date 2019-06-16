@@ -4,7 +4,8 @@ import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import './App.css';
 import { connect } from 'react-redux';
 
-import { addTodo, updateTodo, deleteTodo, filterTodo } from './actions/todoActions';
+import history from './history';
+import { addTodo, updateTodo, deleteTodo, filterTodo, sortTodos } from './actions/todoActions';
 import CreateTodo from './containers/CreateTodo';
 import { DisplayTodo } from './containers/DisplayTodo';
 import OneTodo from './containers/OneTodo';
@@ -33,7 +34,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Router>
+        <Router history={history}>
           {this.state.createTodo ? <CreateTodo updateTodo={this.props.updateTodo.bind(this)} addTodo={this.props.addTodo.bind(this)} editTodo={this.state.editTodo} closeTodo={this.closeCreateTodoModal.bind(this)} /> : null}
 
           {this.state.currentId}
@@ -43,7 +44,9 @@ class App extends Component {
                 <DisplayTodo 
                     updateTodo={this.props.updateTodo.bind(this)} 
                     deleteTodo={this.props.deleteTodo.bind(this)} 
-                    todos={this.props.todoState.searchTerm?this.props.todoState.display:this.props.todoState.todos} 
+                    sortTodos={this.props.sortTodos.bind(this)}
+                    todos={this.props.todoState.display && this.props.todoState.display.length>0?this.props.todoState.display:this.props.todoState.todos} 
+                    sortType={this.props.todoState.sortType}
                     triggerEdit={this.triggerEdit}
                     filterTodo={this.props.filterTodo}
                     showCreateTodoModal={this.showCreateTodoModal}>
@@ -142,6 +145,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     filterTodo : (searchTerm) => {
       dispatch(filterTodo(searchTerm));
+    },
+    sortTodos : (sortType) => {
+      dispatch(sortTodos(sortType));
     }
   }
 }

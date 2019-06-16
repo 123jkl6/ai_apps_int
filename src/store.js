@@ -4,6 +4,8 @@ const initialState = {
     currentId: 1,
     todos: [],
     lastValues: [],
+    display:[],
+    searchTerm:null,
 };
 
 console.log('creating store');
@@ -59,15 +61,21 @@ const reducer = (state = initialState, action) => {
                     newTodos.push(oneTodo);
                 }
             }
-            let displayTodos = [];
-            if (state.searchTerm) {
-                let searchTerm = state.searchTerm;
-                displayTodos = filterWithSearchTerm(searchTerm,newTodos);
+            let displayTodosID = [];
+            if (state.display.length>0){
+                displayTodosID = state.display.map((el)=>{return el.id});
             }
+            
+            // if (state.searchTerm) {
+            //     let searchTerm = state.searchTerm;
+            //     displayTodos = filterWithSearchTerm(searchTerm,newTodos);
+            // }
+            let displayTodos = newTodos.filter((el)=>{return displayTodosID.includes(el.id);});
+            console.log(displayTodos);
             const newState = {
                 currentId: state.currentId,
                 todos: [...newTodos],
-                display: displayTodos,
+                display: [...displayTodos],
                 searchTerm:state.searchTerm,
                 sortType:state.sortType,
                 lastValues: [...state.todos,],
@@ -117,19 +125,30 @@ const reducer = (state = initialState, action) => {
         case "SORT" :{
             const sortType = action.payload;
             let displayTodo = [];
-            if (state.display && state.display.length!=0){
+            if (state.display && state.display.length>0){
                 displayTodo = [...state.display];
             } else {
                 displayTodo = [...state.todos];
             }
-            sortTodos(displayTodo);
+            if (sortType.sort=="Fav"){
+                
+                if (sortType.order=="YES"){
+                    let newDisplayTodo = displayTodo.filter((el)=>{return el.favorite;});
+                    displayTodo = newDisplayTodo;
+                } else {
+                    //copy all
+                    displayTodo = [...state.todos];
+                }
+                
+            }
+            sortTodos(sortType,displayTodo);
 
             const newState = {
                 currentId: state.currentId,
                 todos: [...state.todos],
                 display: displayTodo,
                 searchTerm: state.searchTerm,
-                sortType:sortType,
+                sortType:{...sortType},
                 lastValues: [...state.todos,],
             }
 
@@ -147,6 +166,7 @@ const reducer = (state = initialState, action) => {
 
 const filterWithSearchTerm = (searchTerm,todoArr)=>{
     const displayTodos = [];
+    
     for (let oneTodo of todoArr) {
         let added = false;
         if (oneTodo.title.includes(searchTerm)) {
@@ -179,26 +199,27 @@ const sortTodos = (sortType,displayTodo) => {
         case "Title" : {
             if (sortType.order=="DESC"){
                 displayTodo.sort((a,b)=>{
-                    return b.title-a.title;
+                    return (""+b.title).localeCompare(a.title);
                 });
             } else {
                 displayTodo.sort((a,b)=>{
-                    return a.title-b.title;
+                    return (""+a.title).localeCompare(b.title);
                 });
             }
         }
         case "Date" : {
             if (sortType.order=="DESC"){
                 displayTodo.sort((a,b)=>{
-                    return b.date-a.date;
+                    return (new Date(b.date))-(new Date(a.date));
                 });
             } else {
                 displayTodo.sort((a,b)=>{
-                    return a.date-b.date;
+                    return (new Date(a.date))-(new Date(b.date));
                 });
             }
         }
     }
+    console.log(displayTodo);
 };
 
 export default createStore(combineReducers({ reducer }));

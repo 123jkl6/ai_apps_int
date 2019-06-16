@@ -3,14 +3,6 @@ import { saveAs } from '@progress/kendo-file-saver';
 
 export class OneTodo extends React.Component {
 
-<<<<<<< HEAD
-    return (
-        <div className="row one-todo">
-            <div className="col-8" >
-                <div >
-                    <span >ID {props.todo ? props.todo.id : null}</span>
-
-=======
     constructor(props) {
         super(props);
         let statusColor = this.getStatusColor(props.todo.status);
@@ -95,7 +87,6 @@ export class OneTodo extends React.Component {
                             return <span key={key}><a className="btn text-info" onClick={() => { this.downloadFile(key); }} >{item.name}</a>{key !== (this.props.todo.attachments.length - 1) ? ", " : ""}</span>
                         }) : null) : null}
                     </div>
->>>>>>> master
                 </div>
                 <div className="col-lg-3 col">
                     <span className="row btn btn-danger" style={{ marginBottom: "5%" }} onClick={this.handleDeleteTodo}>DELETE</span>
@@ -112,28 +103,8 @@ export class OneTodo extends React.Component {
                         </select>
                     </span>
                 </div>
-<<<<<<< HEAD
-                <div>
-                    <span className="title">Summary : </span>
-                    <span>{props.todo ? props.todo.summary : null}</span>
-                </div>
-            </div>
-
-            <div className="col-4" >
-                <span className="p-2"><b>Date :</b> {props.todo ? props.todo.date : null}</span>
-                <span className="p-2"><b>Time : </b>{props.todo ? props.todo.time : null}</span>
-                <div className="row">
-                    <span className="glyphicon glyphicon-pencil"></span>
-                </div>
-            </div>
-            
-            <hr />
-        </div>
-    );
-=======
 
             </div>
         );
     };
->>>>>>> master
 };

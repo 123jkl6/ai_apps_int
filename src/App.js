@@ -24,20 +24,16 @@ class App extends Component {
     this.triggerEdit = this.triggerEdit.bind(this);
   }
 
+
+
+
+  
   render() {
     return (
       <div>
-<<<<<<< HEAD
-        
-        {this.state.createTodo ? <CreateTodo addTodo={this.props.addTodo.bind(this)} closeTodo={this.closeCreateTodoModal.bind(this)} /> : null}
-        <button onClick={this.showCreateTodoModal.bind(this)} className="btn btn-primary btn-large" >
-          New Todo
-        </button>
-=======
 
         {this.state.createTodo ? <CreateTodo updateTodo={this.props.updateTodo.bind(this)} addTodo={this.props.addTodo.bind(this)} editTodo={this.state.editTodo} closeTodo={this.closeCreateTodoModal.bind(this)} /> : null}
 
->>>>>>> master
         {this.state.currentId}
         {!this.state.createTodo ?
           (

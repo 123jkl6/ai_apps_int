@@ -13,10 +13,15 @@ body {
 }
 
 #createTodoForm{
-  position:fixed;
+  position:relative;
   width:100%;
   height:100%;
+<<<<<<< HEAD
   background-color:#A9A9A9;
+=======
+  background-color:#909090;
+  z-index:1;
+>>>>>>> master
 }
 
 .form-width{
@@ -48,9 +53,17 @@ body {
 .display-todo{
   margin-left:5%;
   margin-right:5%;
+<<<<<<< HEAD
 }
 
 .one-todo{
   padding-top:2%;
   padding-bottom:2%;
+=======
+  padding-bottom:5%;
+}
+
+.status-control{
+  width:200px;
+>>>>>>> master
 }

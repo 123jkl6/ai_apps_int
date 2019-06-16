@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
+import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 
 import './App.css';
 import { connect } from 'react-redux';
 
 import { addTodo, updateTodo, deleteTodo, filterTodo } from './actions/todoActions';
-import store from './store';
-import { CreateTodo } from './containers/CreateTodo';
+import CreateTodo from './containers/CreateTodo';
 import { DisplayTodo } from './containers/DisplayTodo';
+import OneTodo from './containers/OneTodo';
 
 class App extends Component {
   constructor(props) {
@@ -22,6 +23,7 @@ class App extends Component {
 
     this.handleSearchInput = this.handleSearchInput.bind(this);
     this.triggerEdit = this.triggerEdit.bind(this);
+    this.showCreateTodoModal = this.showCreateTodoModal.bind(this);
   }
 
 
@@ -31,33 +33,31 @@ class App extends Component {
   render() {
     return (
       <div>
+        <Router>
+          {this.state.createTodo ? <CreateTodo updateTodo={this.props.updateTodo.bind(this)} addTodo={this.props.addTodo.bind(this)} editTodo={this.state.editTodo} closeTodo={this.closeCreateTodoModal.bind(this)} /> : null}
 
-        {this.state.createTodo ? <CreateTodo updateTodo={this.props.updateTodo.bind(this)} addTodo={this.props.addTodo.bind(this)} editTodo={this.state.editTodo} closeTodo={this.closeCreateTodoModal.bind(this)} /> : null}
-
-        {this.state.currentId}
-        {!this.state.createTodo ?
-          (
-            <div>
-              <div className="row">
-                <div className="col-5">
-                  <button onClick={this.showCreateTodoModal.bind(this)} className="btn btn-primary btn-large" >
-                  New
-                  </button>
-                </div>
-                <div className="col-3">
-                  
-                </div>
-                
-                <div className="col-3">
-                  <input id="search" className="form-control" value={this.state.searchInput} onChange={this.handleSearchInput}/>
-                </div>
-                
-              </div>
-              <DisplayTodo updateTodo={this.props.updateTodo.bind(this)} deleteTodo={this.props.deleteTodo.bind(this)} todos={this.props.todoState.searchTerm?this.props.todoState.display:this.props.todoState.todos} triggerEdit={this.triggerEdit}></DisplayTodo>
-            </div>
-            )
-          : null}
-
+          {this.state.currentId}
+          
+            <Switch>
+              <Route exact path="/">
+                <DisplayTodo 
+                    updateTodo={this.props.updateTodo.bind(this)} 
+                    deleteTodo={this.props.deleteTodo.bind(this)} 
+                    todos={this.props.todoState.searchTerm?this.props.todoState.display:this.props.todoState.todos} 
+                    triggerEdit={this.triggerEdit}
+                    filterTodo={this.props.filterTodo}
+                    showCreateTodoModal={this.showCreateTodoModal}>
+                  </DisplayTodo>
+              </Route>
+              <Route path="/create" 
+                render={()=><CreateTodo updateTodo={this.props.updateTodo.bind(this)} addTodo={this.props.addTodo.bind(this)} editTodo={this.state.editTodo} closeTodo={this.closeCreateTodoModal.bind(this)} />}>
+                </Route>
+              <Route path="/edit/:id" 
+                render={(props)=><CreateTodo updateTodo={this.props.updateTodo.bind(this)} addTodo={this.props.addTodo.bind(this)} editTodo={this.props.todoState.todos.find((el)=>el.id==props.match.params.id)} closeTodo={this.closeCreateTodoModal.bind(this)} />}>
+                </Route>
+              <Route path="/todo/:id" render={(props)=><OneTodo todo={this.props.todoState.todos.find((el)=>el.id==props.match.params.id)} updateTodo={this.props.updateTodo.bind(this)} deleteTodo={this.props.deleteTodo.bind(this)}></OneTodo>}></Route>
+            </Switch>
+        </Router>
       </div>
     );
   }

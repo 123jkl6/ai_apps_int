@@ -28,7 +28,7 @@ const reducer = (state = initialState, action) => {
                 todos: [...state.todos, newPayload,],
                 display: [],
                 searchTerm:null,
-                sortType:null,
+                sortType:{...state.sortType},
                 lastValues: [...state.todos,],
             };
             localStorage.setItem('todoState', JSON.stringify(newState));
@@ -51,6 +51,7 @@ const reducer = (state = initialState, action) => {
                         labels: [...newPayload.labels],
                         attachments: [...newPayload.attachments],
                         status: newPayload.status,
+                        favorite:newPayload.favorite,
                     };
                     newTodos.push(updatedTodo);
                 } else {
@@ -107,7 +108,7 @@ const reducer = (state = initialState, action) => {
                 todos: [...state.todos],
                 display: displayTodos,
                 searchTerm: searchTerm,
-                sortType:state.sortType,
+                sortType:{...state.sortType},
                 lastValues: [...state.todos,],
             };
 
@@ -148,7 +149,7 @@ const filterWithSearchTerm = (searchTerm,todoArr)=>{
     const displayTodos = [];
     for (let oneTodo of todoArr) {
         let added = false;
-        if (oneTodo.title.includes(searchTerm) || oneTodo.summary.includes(searchTerm)) {
+        if (oneTodo.title.includes(searchTerm)) {
             displayTodos.push({ ...oneTodo });
             added = true;
         }

@@ -1,23 +1,25 @@
 import React from 'react';
+import { Link, withRouter } from 'react-router-dom';
 
-export class CreateTodo extends React.Component {
+class CreateTodo extends React.Component {
 
     constructor(props) {
         super(props);
-
-        let editTodo = props.editTodo;
-
+        console.log(this.props.history);
+        let editTodo = props.editTodo?{...props.editTodo}:null;
+        console.log(editTodo);
         this.state = {
             title: editTodo?editTodo.title:'',
             summary: editTodo?editTodo.summary:'',
             date: editTodo?editTodo.date:'',
             time: '',
             hour: editTodo?editTodo.time[0]+editTodo.time[1]:'',
-            minute: editTodo?editTodo.time[3]+editTodo.time[4]:'',
+            minute: editTodo?editTodo.time[2]+editTodo.time[3]:'',
             oneLabel: "",
             labels: editTodo?[...editTodo.labels]:[],
             status: editTodo?editTodo.status:"",
             attachments: editTodo?[...editTodo.attachments]:[],
+            favorite:editTodo?editTodo.favorite:false,
             submitted: false,
             validTitle: editTodo?true:false,
             validSummary: editTodo?true:false,
@@ -121,9 +123,9 @@ export class CreateTodo extends React.Component {
     // }
 
     handleHour(event) {
-
+        console.log(event.target.value);
         if (event.target.value < 0 || event.target.value > 23 ||
-            !event.target.value.match(/[0-9]/)) {
+            !event.target.value.match(/^[0-9]+$/)) {
             this.setState({ hour: '', validHour: false });
             return;
         }
@@ -135,7 +137,7 @@ export class CreateTodo extends React.Component {
     handleMinute(event) {
 
         if (event.target.value < 0 || event.target.value > 59 ||
-            !event.target.value.match(/[0-9]/)) {
+            !event.target.value.match(/^[0-9]+$/)) {
             this.setState({ minute: '', validMinute: false });
             return;
         }
@@ -217,7 +219,14 @@ export class CreateTodo extends React.Component {
                         attachments:this.state.attachments,
                     });
                 }
-                this.props.closeTodo();
+                //not relevant
+                //this.props.closeTodo();
+                if (!this.props.editTodo){
+                    this.props.history.push("/");
+                } else {
+                    this.props.history.push("/todo/"+this.props.editTodo.id);
+                }
+                
             });
 
         }
@@ -236,7 +245,9 @@ export class CreateTodo extends React.Component {
                     <div className="row">
                         <div className="col-11"></div>
                         <div className="col-1">
-                            <span onClick={this.props.closeTodo} className="pull-right btn btn-danger">&times;</span>
+                            <Link to={this.props.editTodo?"/todo/"+this.props.editTodo.id:"/"}>
+                                <span className="pull-right btn btn-danger">&times;</span>
+                            </Link>
                         </div>
                     </div>
                     <div className="form-group" >
@@ -332,3 +343,5 @@ export class CreateTodo extends React.Component {
         );
     }
 };
+
+export default withRouter(CreateTodo);

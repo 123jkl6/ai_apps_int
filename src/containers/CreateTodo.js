@@ -74,7 +74,7 @@ class CreateTodo extends React.Component {
         // if (event.key == 'Enter'){
         //     event.preventDefault();
         // }
-        this.setState({ oneLabel: event.target.value,validLabel:true });
+        this.setState({ oneLabel: event.target.value });
     }
 
     removeLabel(key){
@@ -96,8 +96,15 @@ class CreateTodo extends React.Component {
             //don't submit form
             event.preventDefault();
             if (!this.state.labels.includes(this.state.oneLabel.trim()) && this.state.oneLabel.trim()) {
-                this.setState({ labels: [...this.state.labels, this.state.oneLabel.trim()] });
+                this.setState({ labels: [...this.state.labels, this.state.oneLabel.trim()], oneLabel:"" });
             }
+        }
+    }
+
+    handleLabelFocusOut(event){
+        console.log(event.target);
+        if (!this.state.labels.includes(this.state.oneLabel.trim()) && this.state.oneLabel.trim()) {
+            this.setState({ labels: [...this.state.labels, this.state.oneLabel.trim()], oneLabel:"" });
         }
     }
 
@@ -243,7 +250,7 @@ class CreateTodo extends React.Component {
 
     render() {
         return (
-            <div id="createTodoForm">
+            <div id="createTodoForm" className="bg-secondary">
                 <form className="container add-padding form-width">
 
                     <div className="row">
@@ -277,7 +284,7 @@ class CreateTodo extends React.Component {
                             <label htmlFor="labels" >
                                 Labels
                             </label>
-                            <input id="labels" className="form-control" value={this.state.oneLabel} onChange={this.handleLabel} onKeyDown={this.handleEnterAtLabel} />
+                            <input id="labels" className="form-control" value={this.state.oneLabel} onChange={this.handleLabel} onBlur={this.handleLabelFocusOut.bind(this)} onKeyDown={this.handleEnterAtLabel} />
                             
                         </div>
                     </div>

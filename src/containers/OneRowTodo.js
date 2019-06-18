@@ -26,6 +26,9 @@ export const OneRowTodo = (props) => {
             <span className="col-2">
                 {props.todo.date}
             </span>
+            <span className="col-2">
+                {props.todo.createDate}
+            </span>
             <span className="col-1">
                 <i className={"btn "+(props.todo.favorite?"fas":"far")+" fa-heart text-danger"} 
                     onClick={()=>{updateFavorite()}}>

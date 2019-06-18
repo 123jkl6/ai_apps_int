@@ -1,4 +1,4 @@
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, bindActionCreators } from 'redux';
 
 const initialState = {
     currentId: 1,
@@ -6,6 +6,7 @@ const initialState = {
     lastValues: [],
     display:[],
     searchTerm:null,
+    notifications : [],
 };
 
 console.log('creating store');
@@ -25,12 +26,24 @@ const reducer = (state = initialState, action) => {
         case "ADD": {
             const newPayload = action.payload;
             newPayload.id = state.currentId;
+
+            let displayTodosID = [];
+            if (state.display.length>0){
+                displayTodosID = state.display.map((el)=>{return el.id});
+            }
+            let displayTodos = state.todos.filter((el)=>{return displayTodosID.includes(el.id);});
+            console.log(displayTodos);
+
+            let currentDate = (new Date()).toISOString().split("T")[0];
+            
             const newState = {
                 currentId: state.currentId + 1,
-                todos: [...state.todos, newPayload,],
+                todos: [...state.todos, {...newPayload,createDate: currentDate},],
+                //make this empty first, should come up with a more seamless way to integrate new todos into filtered ones
                 display: [],
-                searchTerm:null,
+                searchTerm:state.searchTerm,
                 sortType:{...state.sortType},
+                notifications : [],
                 lastValues: [...state.todos,],
             };
             localStorage.setItem('todoState', JSON.stringify(newState));
@@ -49,6 +62,7 @@ const reducer = (state = initialState, action) => {
                         title: newPayload.title,
                         summary: newPayload.summary,
                         date: newPayload.date,
+                        createDate : newPayload.createDate,
                         time: newPayload.time,
                         labels: [...newPayload.labels],
                         attachments: [...newPayload.attachments],
@@ -78,6 +92,7 @@ const reducer = (state = initialState, action) => {
                 display: [...displayTodos],
                 searchTerm:state.searchTerm,
                 sortType:state.sortType,
+                notifications : [],
                 lastValues: [...state.todos,],
             };
             //persist to localStorage first
@@ -96,11 +111,19 @@ const reducer = (state = initialState, action) => {
                     newTodos.push(oneTodo);
                 }
             }
-
+            let displayTodosID = [];
+            if (state.display.length>0){
+                displayTodosID = state.display.map((el)=>{return el.id});
+            }
+            let displayTodos = newTodos.filter((el)=>{return (displayTodosID.includes(el.id) && action.payload.id !=  el.id);});
+            console.log(displayTodos);
             const newState = {
                 currentId: state.currentId,
                 todos: [...newTodos],
-                display: [],
+                display: [...displayTodos],
+                searchTerm:state.searchTerm,
+                sortType:state.sortType,
+                notifications : [],
                 lastValues: [...state.todos,],
             };
             localStorage.setItem('todoState', JSON.stringify(newState));
@@ -215,6 +238,17 @@ const sortTodos = (sortType,displayTodo) => {
             } else {
                 displayTodo.sort((a,b)=>{
                     return (new Date(a.date))-(new Date(b.date));
+                });
+            }
+        }
+        case "Created" : {
+            if (sortType.order=="DESC"){
+                displayTodo.sort((a,b)=>{
+                    return (new Date(b.createDate))-(new Date(a.createDate));
+                });
+            } else {
+                displayTodo.sort((a,b)=>{
+                    return (new Date(a.createDate))-(new Date(b.createDate));
                 });
             }
         }

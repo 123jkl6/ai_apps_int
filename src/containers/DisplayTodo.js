@@ -10,6 +10,7 @@ export const DisplayTodo = (props) => {
     let idClass = "";
     let titleClass = "";
     let dateClass = "";
+    let createClass = ""; 
     let favClass = "";
     if (sortType){
       switch (sortType.sort){
@@ -37,9 +38,17 @@ export const DisplayTodo = (props) => {
           }
           break;
         }
+        case "Created" : {
+          if (sortType.order==="DESC"){
+            createClass = "fas fa-arrow-down"
+          } else {
+            createClass = "fas fa-arrow-up"
+          }
+          break;
+        }
         case "Fav" :{
           if (sortType.order==="YES"){
-            favClass="bg-success"
+            favClass="fas fa-check"
           } else {
             favClass="";
           }
@@ -113,16 +122,19 @@ export const DisplayTodo = (props) => {
               </Link>
             </div>
             <div className="row">
-              <span className="btn col-2" onClick={()=>{props.sortTodos(sendSortType("ID",idClass));}}>
+              <span className="header-col col-2" onClick={()=>{props.sortTodos(sendSortType("ID",idClass));}}>
                 ID  <i className={idClass}></i>
               </span>
-              <span className="btn col" onClick={()=>{props.sortTodos(sendSortType("Title",titleClass));}}>
+              <span className="header-col col" onClick={()=>{props.sortTodos(sendSortType("Title",titleClass));}}>
                 Title <i className={titleClass}></i>
               </span>
-              <span className="btn col-2" onClick={()=>{props.sortTodos(sendSortType("Date",dateClass));}}>
-                Date <i className={dateClass}></i>
+              <span className="header-col col-2" onClick={()=>{props.sortTodos(sendSortType("Date",dateClass));}}>
+                Due <i className={dateClass}></i>
               </span>
-              <span className={"btn col-1 "+favClass} onClick={()=>{props.sortTodos(sendSortType("Fav",favClass));}}>
+              <span className="header-col col-2" onClick={()=>{props.sortTodos(sendSortType("Created",createClass));}}>
+                Created <i className={createClass}></i>
+              </span>
+              <span className={"header-col col-1 "+favClass} onClick={()=>{props.sortTodos(sendSortType("Fav",favClass));}}>
                 Fav 
               </span>
             </div>

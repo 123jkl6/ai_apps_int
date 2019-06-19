@@ -214,6 +214,7 @@ class CreateTodo extends React.Component {
                         time: this.state.time,
                         status: this.props.editTodo?this.props.editTodo.status:"Not Started",
                         attachments:this.state.attachments,
+                        favorite:this.props.editTodo?this.props.editTodo.favorite:false,
                     });
                 } else {
                     this.props.addTodo({
@@ -224,6 +225,7 @@ class CreateTodo extends React.Component {
                         time: this.state.time,
                         status: "Not Started",
                         attachments:this.state.attachments,
+                        favorite:false,
                     });
                 }
                 //not relevant

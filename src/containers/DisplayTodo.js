@@ -29,6 +29,7 @@ export const DisplayTodo = (props) => {
             titleClass = "fas fa-arrow-up"
           }
           break;
+
         }
         case "Date" : {
           if (sortType.order==="DESC"){
@@ -46,14 +47,14 @@ export const DisplayTodo = (props) => {
           }
           break;
         }
-        case "Fav" :{
-          if (sortType.order==="YES"){
-            favClass="fas fa-check"
-          } else {
-            favClass="";
-          }
-          break;
-        }
+        // case "Fav" :{
+        //   if (sortType.order==="YES"){
+        //     favClass="fas fa-check"
+        //   } else {
+        //     favClass="";
+        //   }
+        //   break;
+        // }
         default : {
           //ID ASC
           idClass ="fas fa-arrow-up";
@@ -63,22 +64,26 @@ export const DisplayTodo = (props) => {
     } else {
       idClass ="fas fa-arrow-up";
     }
+    
+    if (props.favFilterToggle){
+      favClass="fas fa-check"
+    } 
 
     const sendSortType = (sort,classNameString)=>{
       //catch fav first
-      if (sort=="Fav"){
-        if (!classNameString) {
-          return {
-            sort:sort,
-            order:"YES",
-          };
-        } else {
-          return {
-            sort:sort,
-            order:"NO",
-          };
-        }
-      }
+      // if (sort=="Fav"){
+      //   if (!classNameString) {
+      //     return {
+      //       sort:sort,
+      //       order:"YES",
+      //     };
+      //   } else {
+      //     return {
+      //       sort:sort,
+      //       order:"NO",
+      //     };
+      //   }
+      // }
       if (classNameString.includes("down") || !classNameString){
         return {
           sort: sort,
@@ -134,7 +139,7 @@ export const DisplayTodo = (props) => {
               <span className="header-col col-2" onClick={()=>{props.sortTodos(sendSortType("Created",createClass));}}>
                 Created <i className={createClass}></i>
               </span>
-              <span className={"header-col col-1 "+favClass} onClick={()=>{props.sortTodos(sendSortType("Fav",favClass));}}>
+              <span className={"header-col col-1 "+favClass} onClick={()=>{props.filterFavTodo(!props.favFilterToggle);}}>
                 Fav 
               </span>
             </div>

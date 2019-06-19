@@ -30,5 +30,12 @@ export function sortTodos(sortType){
     return {
         type:"SORT",
         payload:sortType,
-    }
+    };
+}
+
+export function filterFavTodo(fav){
+    return {
+        type:"FILTER_FAV",
+        payload:fav,
+    };
 }

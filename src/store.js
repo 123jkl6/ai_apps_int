@@ -7,6 +7,7 @@ const initialState = {
     display:[],
     searchTerm:null,
     notifications : [],
+    favFilterToggle:false,
 };
 
 console.log('creating store');
@@ -43,8 +44,9 @@ const reducer = (state = initialState, action) => {
                 display: [],
                 searchTerm:state.searchTerm,
                 sortType:{...state.sortType},
-                notifications : [],
+                notifications : [...state.notifications],
                 lastValues: [...state.todos,],
+                favFilterToggle:state.favFilterToggle,
             };
             localStorage.setItem('todoState', JSON.stringify(newState));
             return newState;
@@ -92,8 +94,9 @@ const reducer = (state = initialState, action) => {
                 display: [...displayTodos],
                 searchTerm:state.searchTerm,
                 sortType:state.sortType,
-                notifications : [],
+                notifications : [...state.notifications],
                 lastValues: [...state.todos,],
+                favFilterToggle:state.favFilterToggle,
             };
             //persist to localStorage first
             localStorage.setItem('todoState', JSON.stringify(newState));
@@ -123,8 +126,9 @@ const reducer = (state = initialState, action) => {
                 display: [...displayTodos],
                 searchTerm:state.searchTerm,
                 sortType:state.sortType,
-                notifications : [],
+                notifications : [...state.notifications],
                 lastValues: [...state.todos,],
+                favFilterToggle:state.favFilterToggle,
             };
             localStorage.setItem('todoState', JSON.stringify(newState));
             return newState;
@@ -132,20 +136,24 @@ const reducer = (state = initialState, action) => {
         case "FILTER": {
             const searchTerm = action.payload;
             
-            const displayTodos = filterWithSearchTerm(searchTerm,state.todos);
-            
+            const displayTodos = filterWithSearchTerm(searchTerm,state.favFilterToggle?state.display:state.todos);
+            if (state.sortType){
+                sortTodos(state.sortType,displayTodos);
+            }
             const newState = {
                 currentId: state.currentId,
                 todos: [...state.todos],
                 display: displayTodos,
                 searchTerm: searchTerm,
                 sortType:{...state.sortType},
+                notifications : [...state.notifications],
                 lastValues: [...state.todos,],
+                favFilterToggle:state.favFilterToggle,
             };
 
             return newState;
         }
-        case "SORT" :{
+        case "SORT" : {
             const sortType = action.payload;
             let displayTodo = [];
             if (state.display && state.display.length>0){
@@ -153,17 +161,17 @@ const reducer = (state = initialState, action) => {
             } else {
                 displayTodo = [...state.todos];
             }
-            if (sortType.sort=="Fav"){
+            // if (sortType.sort=="Fav"){
                 
-                if (sortType.order=="YES"){
-                    let newDisplayTodo = displayTodo.filter((el)=>{return el.favorite;});
-                    displayTodo = newDisplayTodo;
-                } else {
-                    //copy all
-                    displayTodo = [...state.todos];
-                }
+            //     if (sortType.order=="YES"){
+            //         let newDisplayTodo = displayTodo.filter((el)=>{return el.favorite;});
+            //         displayTodo = newDisplayTodo;
+            //     } else {
+            //         //copy all
+            //         displayTodo = [...state.todos];
+            //     }
                 
-            }
+            // }
             sortTodos(sortType,displayTodo);
 
             const newState = {
@@ -172,7 +180,51 @@ const reducer = (state = initialState, action) => {
                 display: displayTodo,
                 searchTerm: state.searchTerm,
                 sortType:{...sortType},
+                notifications : [...state.notifications],
                 lastValues: [...state.todos,],
+                favFilterToggle:state.favFilterToggle,
+            }
+
+            return newState;
+        }
+        case "FILTER_FAV": {
+            //conditional statements can be refactored.
+            console.log(action.payload);
+            let displayTodo = [];
+            if (state.display && state.display.length>0){
+                displayTodo = [...state.display];
+            } else {
+                displayTodo = [...state.todos];
+            }
+
+            if (action.payload && state.display && state.display.length>0){
+                console.log("reached.");
+                displayTodo = state.display.filter((el)=>{return el.favorite;});
+            } else if (action.payload && (!state.display || state.display.length<1)) {
+                displayTodo = state.todos.filter((el)=>{return el.favorite;});
+            } else {
+                if (state.searchTerm){
+                    console.log("reached.");
+                    displayTodo = filterWithSearchTerm(state.searchTerm,state.todos);
+                } else {
+                    console.log("reached.");
+                    displayTodo = [...state.todos];
+                }
+            }
+            //if there is sort, apply the sort
+            if (state.sortType){
+                sortTodos(state.sortType,displayTodo);
+            }
+            console.log(displayTodo);
+            const newState = {
+                currentId: state.currentId,
+                todos: [...state.todos],
+                display: displayTodo,
+                searchTerm: state.searchTerm,
+                sortType:{...state.sortType},
+                lastValues: [...state.todos,],
+                notifications:[...state.notifications],
+                favFilterToggle:action.payload,
             }
 
             return newState;

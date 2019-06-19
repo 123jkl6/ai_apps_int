@@ -5,7 +5,7 @@ import './App.css';
 import { connect } from 'react-redux';
 
 import history from './history';
-import { addTodo, updateTodo, deleteTodo, filterTodo, sortTodos } from './actions/todoActions';
+import { addTodo, updateTodo, deleteTodo, filterTodo, sortTodos, filterFavTodo } from './actions/todoActions';
 import CreateTodo from './containers/CreateTodo';
 import { DisplayTodo } from './containers/DisplayTodo';
 import OneTodo from './containers/OneTodo';
@@ -30,7 +30,6 @@ class App extends Component {
 
 
 
-  
   render() {
     return (
       <div className="bg-light">
@@ -49,6 +48,8 @@ class App extends Component {
                     sortType={this.props.todoState.sortType}
                     triggerEdit={this.triggerEdit}
                     filterTodo={this.props.filterTodo}
+                    favFilterToggle={this.props.todoState.favFilterToggle}
+                    filterFavTodo={this.props.filterFavTodo}
                     showCreateTodoModal={this.showCreateTodoModal}>
                   </DisplayTodo>
               </Route>
@@ -148,8 +149,12 @@ const mapDispatchToProps = (dispatch) => {
     },
     sortTodos : (sortType) => {
       dispatch(sortTodos(sortType));
-    }
-  }
+    },
+    filterFavTodo : (fav) => {
+      dispatch(filterFavTodo(fav));
+    },
+  };
+
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

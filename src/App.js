@@ -32,7 +32,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="bg-light">
+      <div className="">
         <Router history={history}>
           {this.state.createTodo ? <CreateTodo updateTodo={this.props.updateTodo.bind(this)} addTodo={this.props.addTodo.bind(this)} editTodo={this.state.editTodo} closeTodo={this.closeCreateTodoModal.bind(this)} /> : null}
 

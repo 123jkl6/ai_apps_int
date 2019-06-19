@@ -84,7 +84,7 @@ class OneTodo extends React.Component {
 
     render() {
         return (
-            <div className="container">
+            <div className="container" >
                 {this.state.showDeleteModal?
                     <div class="modal" style={{display:"block"}} tabindex="-1" role="dialog">   
                     <div class="modal-dialog" role="document">
@@ -129,7 +129,7 @@ class OneTodo extends React.Component {
 
                         </div>
                         <div>
-                            <span className="title">Summary</span>
+                            <span >Summary : </span>
                             <p>
                                 {this.props.todo ? this.props.todo.summary ? (this.props.todo.summary.split('\n').map((item, key) => {
                                     return <span key={key}>{item}<br /></span>

@@ -252,7 +252,7 @@ class CreateTodo extends React.Component {
 
     render() {
         return (
-            <div id="createTodoForm" className="bg-secondary">
+            <div id="createTodoForm" className="">
                 <form className="container add-padding form-width">
 
                     <div className="row">
@@ -266,7 +266,7 @@ class CreateTodo extends React.Component {
                     <div className="form-group" >
                         <div className="row">
                             <label htmlFor="title" className={(!this.state.validTitle && this.state.submitted ? 'text-danger' : '')}>Title </label>
-                            <input id="title" className='form-control' value={this.state.title}
+                            <input id="title" className={'form-control'+(!this.state.validTitle && this.state.submitted ? ' border-danger':'')} value={this.state.title}
                                 onChange={this.handleTitle} />
                             {!this.state.validTitle && this.state.submitted ? <span className="text-danger">Title is required. </span> : ''}
                         </div>
@@ -275,7 +275,7 @@ class CreateTodo extends React.Component {
                     <div className="form-group">
                         <div className="row">
                             <label htmlFor="summary" className={(!this.state.validSummary && this.state.submitted ? 'text-danger' : '')}>Summary </label>
-                            <textarea id="summary" className="form-control" value={this.state.summary} onChange={this.handleSummary} ></textarea>
+                            <textarea id="summary" className={"form-control "+(!this.state.validSummary && this.state.submitted?"border-danger":"")} value={this.state.summary} onChange={this.handleSummary} ></textarea>
                             {!this.state.validSummary && this.state.submitted ? <span className="text-danger">Summary is required. </span> : ''}
                         </div>
                     </div>
@@ -294,8 +294,8 @@ class CreateTodo extends React.Component {
                     <ul>
                         {this.state.labels.map((item, key) => {
                             return (
-                                <li className="row" key={key}>
-                                    <span className="col-10">{item}</span><span className="btn bg-danger" onClick={()=>{this.removeLabel(key);}}>&times; </span>
+                                <li className="row bg-secondary rounded text-white" key={key}>
+                                    <span className="col-10">{item}</span><span className="col-2 btn bg-danger" onClick={()=>{this.removeLabel(key);}}>&times; </span>
                                 </li>
                             );
                         })}
@@ -304,7 +304,7 @@ class CreateTodo extends React.Component {
                     <div className="form-group">
                         <div className="row">
                             <label htmlFor="date" className={(!this.state.validDate && this.state.submitted ? 'text-danger' : '')}>Date </label>
-                            <input type="date" id="date" className="form-control" value={this.state.date} onChange={this.handleDate} />
+                            <input type="date" id="date" className={"form-control "+(!this.state.validDate && this.state.submitted?"border-danger":"")} value={this.state.date} onChange={this.handleDate} />
                             {!this.state.validDate && this.state.submitted ? <span className="text-danger">Date is required. </span> : ''}
                         </div>
                     </div>
@@ -316,12 +316,12 @@ class CreateTodo extends React.Component {
                         <div className="row" >
                             <div className="col" >
                                 <label htmlFor="hour" className={(!this.state.validHour && this.state.submitted ? 'text-danger' : '')} >Hour</label>
-                                <input id="hour" className="form-control" maxLength="2" value={this.state.hour} onChange={this.handleHour} />
+                                <input id="hour" className={"form-control "+(!this.state.validHour && this.state.submitted ? "border-danger":"")} maxLength="2" value={this.state.hour} onChange={this.handleHour} />
                                 {!this.state.validHour && this.state.submitted ? <span className="text-danger">Hour is required and has to be 0 to 23. </span> : ''}
                             </div>
                             <div className="col">
                                 <label htmlFor="minute" className={(!this.state.validMinute && this.state.submitted ? 'text-danger' : '')} >Minute</label>
-                                <input id="minute" className="form-control" maxLength="2" value={this.state.minute} onChange={this.handleMinute} />
+                                <input id="minute" className={"form-control "+(!this.state.validMinute && this.state.submitted ? "border-danger":"")} maxLength="2" value={this.state.minute} onChange={this.handleMinute} />
                                 {!this.state.validMinute && this.state.submitted ? <span className="text-danger">Minute is required and has to be 0 to 59. </span> : ''}
                             </div>
                         </div>
@@ -338,8 +338,8 @@ class CreateTodo extends React.Component {
                     <ul>
                         {this.state.attachments.map((item, key) => {
                             return (
-                                <li className="row" key={key}>
-                                    <span className="col-10">{item.name}</span><span className="btn bg-danger" onClick={()=>{this.removeFile(key)}}>&times; </span>
+                                <li className="row bg-secondary text-white rounded" key={key}>
+                                    <span className="col-10">{item.name}</span><span className="col-2 btn bg-danger" onClick={()=>{this.removeFile(key)}}>&times; </span>
                                 </li>
                             );
                         })}

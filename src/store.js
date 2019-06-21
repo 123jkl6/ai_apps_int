@@ -6,6 +6,10 @@ const initialState = {
     lastValues: [],
     display:[],
     searchTerm:null,
+    sortType : {
+        sort:"ID",
+        order:"ASC",
+    },
     notifications : [],
     favFilterToggle:false,
 };
@@ -136,7 +140,7 @@ const reducer = (state = initialState, action) => {
         case "FILTER": {
             const searchTerm = action.payload;
             
-            const displayTodos = filterWithSearchTerm(searchTerm,state.favFilterToggle?state.display:state.todos);
+            const displayTodos = filterWithSearchTerm(searchTerm.trim(),state.favFilterToggle?state.display:state.todos);
             if (state.sortType){
                 sortTodos(state.sortType,displayTodos);
             }
@@ -241,10 +245,14 @@ const reducer = (state = initialState, action) => {
 
 const filterWithSearchTerm = (searchTerm,todoArr)=>{
     const displayTodos = [];
-    
+    //catch empty input otherwise calling toUpperCase will throw an error. 
+    if (!searchTerm){
+        return displayTodos;
+    }
+
     for (let oneTodo of todoArr) {
         let added = false;
-        if (oneTodo.title.includes(searchTerm)) {
+        if (oneTodo.title.toUpperCase().includes(searchTerm.toUpperCase())) {
             displayTodos.push({ ...oneTodo });
             added = true;
         }

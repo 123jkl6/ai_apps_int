@@ -44,7 +44,7 @@ class App extends Component {
                     updateTodo={this.props.updateTodo.bind(this)} 
                     deleteTodo={this.props.deleteTodo.bind(this)} 
                     sortTodos={this.props.sortTodos.bind(this)}
-                    todos={this.props.todoState.display && this.props.todoState.display.length>0?this.props.todoState.display:this.props.todoState.todos} 
+                    todos={(!this.props.todoState.display || this.props.todoState.display.length<1) && !this.props.todoState.searchTerm && (this.props.todoState.sortType.sort==="ID") && (this.props.todoState.sortType.order==="ASC") && !this.props.todoState.favFilterToggle ?this.props.todoState.todos:this.props.todoState.display} 
                     sortType={this.props.todoState.sortType}
                     triggerEdit={this.triggerEdit}
                     filterTodo={this.props.filterTodo}

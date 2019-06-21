@@ -3,7 +3,6 @@
 }
 
 body {
-  height:100%;
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -14,15 +13,12 @@ body {
 }
 
 #root{
-  height:100%;
+  min-height:100%;
+  padding:5%;
 }
 
 #createTodoForm{
-  position:relative;
   width:100%;
-  height:100%;
-  color:white;
-  z-index:1;
 }
 
 .form-width{
@@ -46,6 +42,10 @@ body {
   
 }
 
+.padding-p5{
+  padding: 5% 0%;
+}
+
 .title{
   font-weight: bold;
   font-size:18px;
@@ -57,10 +57,11 @@ body {
 
 .display-todo{
   margin-left:5%;
-  margin-right:5%;
+  margin-right:52;
+  padding-top:2%;
   padding-bottom:5%;
 }
 
 .status-control{
-  width:200px;
+  width:100%;
 }

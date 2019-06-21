@@ -111,8 +111,8 @@ export const DisplayTodo = (props) => {
                 <div className="row">
                   <div className="col-8"></div>
                   <div className="col-3">
-                    <label htmlFor="search">Search</label>
-                    <input id="search" className="form-control" onChange={()=>{props.filterTodo(document.getElementById("search").value)}}/>
+                    
+                    <input id="search" className="form-control" placeholder="Search" onChange={()=>{props.filterTodo(document.getElementById("search").value)}}/>
                   </div>
                   
                 </div>

@@ -108,17 +108,18 @@ export const DisplayTodo = (props) => {
     return (
         <div className="display-todo" >
           <div>
-                <div className="row">
-                  <div className="col-8"></div>
-                  <div className="col-3">
-                    
-                    <input id="search" className="form-control" placeholder="Search" onChange={()=>{props.filterTodo(document.getElementById("search").value)}}/>
+                <div className="bg-primary" id="fixedHeader" className="bg-primary" >
+                  <div className="row">
+                    <div className="col-8"></div>
+                    <div className="col-3">
+                      
+                      <input id="search" className="form-control" placeholder="Search" onChange={()=>{props.filterTodo(document.getElementById("search").value)}}/>
+                    </div>
                   </div>
-                  
                 </div>
                 
               </div>
-            <h2 style={{'paddingBottom':'5%'}}>Todos</h2>
+            <h2 style={{'padding':'5% 5%'}}>Todos</h2>
             <div className="row" style={{'paddingBottom':'5%'}}>
               <Link to={"create"}>
                 <button className="btn btn-primary" >

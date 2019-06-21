@@ -21,6 +21,14 @@ body {
   width:100%;
 }
 
+#fixedHeader {
+  position:fixed;
+  width:100%;
+  top:0%;
+  left:0%;
+  padding:5px 0px;
+}
+
 .form-width{
   width:50%;
 }
@@ -60,9 +68,6 @@ body {
 }
 
 .display-todo{
-  margin-left:5%;
-  margin-right:52;
-  padding-top:2%;
   padding-bottom:5%;
 }
 

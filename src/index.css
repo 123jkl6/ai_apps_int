@@ -46,6 +46,10 @@ body {
   padding: 5% 0%;
 }
 
+.margin-m5{
+  margin-bottom: 5%;
+}
+
 .title{
   font-weight: bold;
   font-size:18px;

@@ -258,11 +258,10 @@ class CreateTodo extends React.Component {
                     <div className="row">
                         <div className="col-11"></div>
                         <div className="col-1">
-                            
-                                <span className="pull-right btn btn-danger" onClick={()=>{this.closeForm()}}>&times;</span>
-                            
+                            <span className="pull-right btn btn-danger" onClick={()=>{this.closeForm()}}>&times;</span>
                         </div>
                     </div>
+
                     <div className="form-group" >
                         <div className="row">
                             <label htmlFor="title" className={(!this.state.validTitle && this.state.submitted ? 'text-danger' : '')}>Title </label>
@@ -294,7 +293,7 @@ class CreateTodo extends React.Component {
                     <ul>
                         {this.state.labels.map((item, key) => {
                             return (
-                                <li className="row bg-secondary rounded text-white" key={key}>
+                                <li className="row bg-secondary rounded text-white margin-m5" key={key}>
                                     <span className="col-10">{item}</span><span className="col-2 btn bg-danger" onClick={()=>{this.removeLabel(key);}}>&times; </span>
                                 </li>
                             );
@@ -338,7 +337,7 @@ class CreateTodo extends React.Component {
                     <ul>
                         {this.state.attachments.map((item, key) => {
                             return (
-                                <li className="row bg-secondary text-white rounded" key={key}>
+                                <li className="row bg-secondary text-white rounded margin-m5" key={key}>
                                     <span className="col-10">{item.name}</span><span className="col-2 btn bg-danger" onClick={()=>{this.removeFile(key)}}>&times; </span>
                                 </li>
                             );

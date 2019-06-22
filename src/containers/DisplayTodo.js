@@ -110,10 +110,15 @@ export const DisplayTodo = (props) => {
           <div>
                 <div className="bg-primary" id="fixedHeader" className="bg-primary" >
                   <div className="row">
-                    <div className="col-8"></div>
+                    <div className="col-7"></div>
                     <div className="col-3">
-                      
                       <input id="search" className="form-control" placeholder="Search" onChange={()=>{props.filterTodo(document.getElementById("search").value)}}/>
+                    </div>
+                    <div className="col-1">
+                      <i class="btn fas fa-bell"></i>
+                    </div>
+                    <div className="col-1">
+                      <i class="btn fas fa-bars"></i>
                     </div>
                   </div>
                 </div>

@@ -11,7 +11,7 @@ export const OneRowTodo = (props) => {
         <div className="row">
             <hr style={{ width: "100%" }} />
             <span className="col-2">
-                <Link to={"/edit/"+props.todo.id} className="btn fas fa-edit" style={{color:"black"}}>
+                <Link to={"/edit/"+props.todo.id} className="d-none d-sm-block btn fas fa-edit " style={{color:"black"}}>
                 </Link>
                 
                 <Link to={"/todo/"+props.todo.id}>

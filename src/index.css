@@ -12,6 +12,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body.modal-open{
+  overflow:"hidden";
+}
+
 #root{
   min-height:100%;
   padding:5%;
@@ -29,10 +33,23 @@ body {
   padding:5px 0px;
 }
 
-#deleteModal{
-  position:relative;
-  left:0px;
+.custom-modal{
+  position:fixed;
   top:0px;
+  left:0px;
+  background-color: rgba(211, 211, 211, 0.3);
+  min-height:100%;
+  width:100%;
+  z-index:1;
+}
+
+.custom-modal-content {
+  transition: margin .5s;
+  margin-top : -250px;
+}
+
+.custom-modal-open{
+  margin-top:0px;
 }
 
 .form-width{

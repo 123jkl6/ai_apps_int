@@ -9,6 +9,7 @@ import { addTodo, updateTodo, deleteTodo, filterTodo, sortTodos, filterFavTodo }
 import CreateTodo from './containers/CreateTodo';
 import { DisplayTodo } from './containers/DisplayTodo';
 import OneTodo from './containers/OneTodo';
+import Settings from './containers/settings';
 
 class App extends Component {
   constructor(props) {
@@ -58,6 +59,7 @@ class App extends Component {
                 render={(props)=><CreateTodo updateTodo={this.props.updateTodo.bind(this)} addTodo={this.props.addTodo.bind(this)} editTodo={this.props.todoState.todos.find((el)=>el.id==props.match.params.id)} />}>
                 </Route>
               <Route path="/todo/:id" render={(props)=><OneTodo todo={this.props.todoState.todos.find((el)=>el.id==props.match.params.id)} updateTodo={this.props.updateTodo.bind(this)} deleteTodo={this.props.deleteTodo.bind(this)}></OneTodo>}></Route>
+              <Route path="/settings" render={(props)=><Settings></Settings>}></Route>
             </Switch>
         </Router>
       </div>

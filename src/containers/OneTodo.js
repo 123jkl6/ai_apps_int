@@ -1,5 +1,4 @@
 import React from 'react';
-import Modal from 'react-animated-modal';
 import { saveAs } from '@progress/kendo-file-saver';
 import { Link, withRouter } from 'react-router-dom';
 
@@ -52,11 +51,20 @@ class OneTodo extends React.Component {
     }
 
     confirmDeleteModal() {
-        this.setState({ showDeleteModal: true });
+        this.setState({ showDeleteModal: true },()=>{
+            document.getElementsByTagName("body")[0].classList.toggle("modal-open");
+            //add slight delay to allow animation to kick in.
+            setTimeout(()=>{
+                document.getElementById("deleteModal").classList.toggle("custom-modal-open");
+            },80);
+            
+        });
     }
 
     closeConfirmDeleteModal() {
-        this.setState({ showDeleteModal: false });
+        this.setState({ showDeleteModal: false },()=>{
+            document.getElementsByTagName("body")[0].classList.toggle("modal-open");
+        });
     }
 
     getStatusColor(inputStatus) {
@@ -85,28 +93,30 @@ class OneTodo extends React.Component {
 
     render() {
         return (
-            <div className="" >
-                <Modal visible={this.state.showDeleteModal} closeModal={()=>{this.closeConfirmDeleteModal()}} type="slideInDown">
-                    <div className="" role="dialog"  id="deleteModal">
-                        <div class="" role="document">
-                            
-                                <div className="">
-                                    <h5 className="">Confirm</h5>
-                                   
-                                </div>
-                                <div class="">
-                                    <p>Are you sure you want to delete this todo?</p>
-                                </div>
-                                <div class="">
-                                    <button type="button" className="btn btn-danger" onClick={this.handleDeleteTodo}>DELETE</button>
-                                    <button type="button" className="btn btn-secondary" onClick={this.closeConfirmDeleteModal}>Close</button>
-                                </div>
-                            
+            <div className=""> 
+                {this.state.showDeleteModal?
+                <div className="custom-modal" tabIndex="-1" role="dialog">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content custom-modal-content" id="deleteModal">
+                        <div className="modal-header">
+                            <h5 className="modal-title">Modal title</h5>
+                            <button type="button" className="close"  aria-label="Close" onClick={()=>{this.closeConfirmDeleteModal();}}>
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <p>Modal body text goes here.</p>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-danger" onClick={()=>{this.handleDeleteTodo();}}>DELETE</button>
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={()=>{this.closeConfirmDeleteModal();}}>Close</button>
+                        </div>
                         </div>
                     </div>
-                </Modal>
-                    
-                    
+                </div>
+                    :null}
+                
+                
                 <div className="row" style={{ height: "20px" }}></div>
                 <div className="row">
                     <button className="btn btn-secondary" onClick={this.goBack}>

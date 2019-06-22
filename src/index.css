@@ -29,6 +29,12 @@ body {
   padding:5px 0px;
 }
 
+#deleteModal{
+  position:relative;
+  left:0px;
+  top:0px;
+}
+
 .form-width{
   width:50%;
 }

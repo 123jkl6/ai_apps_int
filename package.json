@@ -5,6 +5,7 @@
   "dependencies": {
     "@progress/kendo-file-saver": "^1.0.7",
     "react": "^16.8.6",
+    "react-animated-modal": "^1.1.1",
     "react-dom": "^16.8.6",
     "react-redux": "^7.0.3",
     "react-router-dom": "^5.0.1",

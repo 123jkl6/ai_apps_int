@@ -1,4 +1,5 @@
 import React from 'react';
+import Modal from 'react-animated-modal';
 import { saveAs } from '@progress/kendo-file-saver';
 import { Link, withRouter } from 'react-router-dom';
 
@@ -85,27 +86,27 @@ class OneTodo extends React.Component {
     render() {
         return (
             <div className="" >
-                {this.state.showDeleteModal ?
-                    <div className="modal" style={{ display: "block" }} tabindex="-1" role="dialog">
-                        <div class="modal-dialog" role="document">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Confirm</h5>
-                                    <button type="button" className="close" onClick={this.closeConfirmDeleteModal} aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                <Modal visible={this.state.showDeleteModal} closeModal={()=>{this.closeConfirmDeleteModal()}} type="slideInDown">
+                    <div className="" role="dialog"  id="deleteModal">
+                        <div class="" role="document">
+                            
+                                <div className="">
+                                    <h5 className="">Confirm</h5>
+                                   
                                 </div>
-                                <div class="modal-body">
+                                <div class="">
                                     <p>Are you sure you want to delete this todo?</p>
                                 </div>
-                                <div class="modal-footer">
+                                <div class="">
                                     <button type="button" className="btn btn-danger" onClick={this.handleDeleteTodo}>DELETE</button>
                                     <button type="button" className="btn btn-secondary" onClick={this.closeConfirmDeleteModal}>Close</button>
                                 </div>
-                            </div>
+                            
                         </div>
                     </div>
-                    : null}
+                </Modal>
+                    
+                    
                 <div className="row" style={{ height: "20px" }}></div>
                 <div className="row">
                     <button className="btn btn-secondary" onClick={this.goBack}>

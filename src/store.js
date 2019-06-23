@@ -1,5 +1,7 @@
 import { createStore, combineReducers, bindActionCreators } from 'redux';
 
+
+
 const initialState = {
     currentId: 1,
     todos: [],
@@ -18,12 +20,21 @@ console.log('creating store');
 const localStorageState = localStorage.getItem('todoState');
 if (localStorageState) {
     const localStorageStateObj = JSON.parse(localStorageState);
-    if (localStorageStateObj.currentId && localStorageStateObj.todos && localStorageStateObj.lastValues) {
+    if (
+        localStorageStateObj.currentId && 
+        localStorageStateObj.todos && 
+        localStorageStateObj.lastValues &&
+        localStorageStateObj.notifications
+        ) {
         initialState.currentId = localStorageStateObj.currentId;
         initialState.todos = localStorageStateObj.todos;
         initialState.lastValues = localStorageStateObj.lastValues;
+        initialState.notifications = localStorageStateObj.notifications;
     }
 }
+
+//set up notifications 
+initialState.notifications = setUpNotifications(initialState.todos, initialState.notifications);
 
 const reducer = (state = initialState, action) => {
     console.log(state);
@@ -78,7 +89,18 @@ const reducer = (state = initialState, action) => {
                     newTodos.push(updatedTodo);
                 } else {
                     //BAU
-                    newTodos.push(oneTodo);
+                    newTodos.push({
+                        id: oneTodo.id,
+                        title: oneTodo.title,
+                        summary: oneTodo.summary,
+                        date: oneTodo.date,
+                        createDate : oneTodo.createDate,
+                        time: oneTodo.time,
+                        labels: [...oneTodo.labels],
+                        attachments: [...oneTodo.attachments],
+                        status: oneTodo.status,
+                        favorite:oneTodo.favorite,
+                    });
                 }
             }
             let displayTodosID = [];
@@ -90,15 +112,33 @@ const reducer = (state = initialState, action) => {
             //     let searchTerm = state.searchTerm;
             //     displayTodos = filterWithSearchTerm(searchTerm,newTodos);
             // }
+            //update display
             let displayTodos = newTodos.filter((el)=>{return displayTodosID.includes(el.id);});
             console.log(displayTodos);
+            //update notifications
+            const updatedNotifications = state.notifications.map((el)=>{
+                if (el.id===newPayload.id){
+                    return {
+                        id:newPayload.id,
+                        title: newPayload.title,
+                        date : newPayload.date,
+                        time :newPayload.time,
+                        status : newPayload.status,
+                        dismissed :el.dismissed, 
+                    };
+                } else {
+                    return {
+                        ...el
+                    };
+                };
+            });
             const newState = {
                 currentId: state.currentId,
                 todos: [...newTodos],
                 display: [...displayTodos],
                 searchTerm:state.searchTerm,
                 sortType:state.sortType,
-                notifications : [...state.notifications],
+                notifications : updatedNotifications,
                 lastValues: [...state.todos,],
                 favFilterToggle:state.favFilterToggle,
             };
@@ -233,6 +273,37 @@ const reducer = (state = initialState, action) => {
 
             return newState;
         }
+        case "UPDATE_NOTIFICATION" :{
+            const updatedNotifications = [];
+            const payload = {...action.payload};
+
+            for (let oneNotification of state.notifications){
+                if (payload.id===oneNotification.id){
+                    //push the new payload
+                    updatedNotifications.push({
+                        ...payload
+                    });
+                } else {
+                    //just push with no change
+                    updatedNotifications.push({
+                        ...oneNotification
+                    });
+                }
+            }
+
+            const newState = {
+                currentId: state.currentId,
+                todos: [...state.todos],
+                display: [...state.display],
+                searchTerm: state.searchTerm,
+                sortType:{...state.sortType},
+                notifications : updatedNotifications,
+                lastValues: [...state.todos,],
+                favFilterToggle:state.favFilterToggle,
+            }
+            localStorage.setItem('todoState', JSON.stringify(newState));
+            return newState;
+        }
         default: {
             //immutability is a good practice
             const newState = {
@@ -315,5 +386,31 @@ const sortTodos = (sortType,displayTodo) => {
     }
     console.log(displayTodo);
 };
+
+function setUpNotifications (todos,oldNotifications) {
+    const notifications = [...oldNotifications];
+    const currentDateTime = new Date();
+
+    for (let oneTodo of todos){
+        if (
+            oneTodo.date<=currentDateTime.toISOString().split(" ")[0] && 
+            //TODO add a time check here as well. 
+            oneTodo.status != "Completed" &&
+            !notifications.find((el)=>{return el.id === oneTodo.id})
+            ){
+            const notification = {
+                id : oneTodo.id,
+                title: oneTodo.title,
+                date : oneTodo.date,
+                time :oneTodo.time,
+                status : oneTodo.status,
+                dismissed :false, //false by default
+            };
+            notifications.push(notification);
+        }
+    }
+
+    return notifications;
+}
 
 export default createStore(combineReducers({ reducer }));

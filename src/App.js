@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 
 import history from './history';
 import { addTodo, updateTodo, deleteTodo, filterTodo, sortTodos, filterFavTodo } from './actions/todoActions';
+import { updateNotification } from './actions/notificationsActions';
 import CreateTodo from './containers/CreateTodo';
 import { DisplayTodo } from './containers/DisplayTodo';
 import OneTodo from './containers/OneTodo';
@@ -61,7 +62,7 @@ class App extends Component {
                 </Route>
               <Route path="/todo/:id" render={(props)=><OneTodo todo={this.props.todoState.todos.find((el)=>el.id==props.match.params.id)} updateTodo={this.props.updateTodo.bind(this)} deleteTodo={this.props.deleteTodo.bind(this)}></OneTodo>}></Route>
               <Route path="/settings" render={(props)=><Settings></Settings>}></Route>
-              <Route path="/notifications" render={(props)=><Notifications></Notifications>}></Route>
+              <Route path="/notifications" render={(props)=><Notifications notifications={this.props.todoState.notifications} updateNotification={this.props.updateNotification.bind(this)}></Notifications>}></Route>
             </Switch>
         </Router>
       </div>
@@ -154,6 +155,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     filterFavTodo : (fav) => {
       dispatch(filterFavTodo(fav));
+    },
+    updateNotification : (notification) => {
+      dispatch(updateNotification(notification));
     },
   };
 

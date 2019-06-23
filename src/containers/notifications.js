@@ -1,6 +1,8 @@
 import React from 'react';
 import {withRouter} from 'react-router-dom';
 
+import { OneNotification } from './oneNotification';
+
 //making this clas stateful only to make it compatible with withRouter
 class Notifications extends React.Component {
 
@@ -15,6 +17,12 @@ class Notifications extends React.Component {
 
     render(){
         
+        const notifications = this.props.notifications;
+        const displayNotifications = [];
+        for (let notification of notifications){
+            displayNotifications.push(<OneNotification todo={notification} updateNotification={this.props.updateNotification}></OneNotification>);
+        }
+
         return (
             <div>
                 <div className="row">
@@ -23,6 +31,7 @@ class Notifications extends React.Component {
                     </button>
                 </div>
                 <h2>Notifications</h2>
+                {displayNotifications}
             </div>
         );
     }

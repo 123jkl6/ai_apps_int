@@ -97,6 +97,11 @@ export const DisplayTodo = (props) => {
       }
     };
 
+    const toggleDropDown = () => {
+      //document.getElementById("menu").classList.toggle("d-none");
+      document.getElementById("menu").classList.toggle("menu-close");
+    }
+
     for (var todoIdx in props.todos){
         displayTodos.push(
             <div key={todoIdx} >
@@ -107,48 +112,61 @@ export const DisplayTodo = (props) => {
 
     return (
         <div className="display-todo" >
-          <div>
-                <div className="bg-primary" id="fixedHeader" className="bg-primary" >
-                  <div className="row">
-                    <div className="col-7"></div>
-                    <div className="col-3">
-                      <input id="search" className="form-control" placeholder="Search" onChange={()=>{props.filterTodo(document.getElementById("search").value)}}/>
-                    </div>
-                    <div className="col-1">
-                      <i class="btn fas fa-bell"></i>
-                    </div>
-                    <div className="col-1">
-                      <i class="btn fas fa-bars"></i>
-                    </div>
-                  </div>
-                </div>
+         
+          <div id="menu" className="menu-close bg-secondary text-white">
+            <div className="container padding-p5">
+              <h2>Menu</h2>
+              <hr className="border-white" />
+              <div>
+                <div><Link to={"/settings"} className="text-white">Settings</Link></div>
+              </div>
+            </div>
+            
+          </div>
+            
+          <div className="bg-primary" id="fixedHeader" className="bg-primary" >
+            <div className="row">
+              <div className="col-7"></div>
+              <div className="col-3">
+                <input id="search" className="form-control" placeholder="Search" onChange={()=>{props.filterTodo(document.getElementById("search").value)}}/>
+              </div>
+              <div className="col-1">
+                <Link to={"/notifications"} className="text-white">
+                  <i className="btn fas fa-bell"></i>
+                </Link>
                 
               </div>
-            <h2 style={{'padding':'5% 5%'}}>Todos</h2>
-            <div className="row" style={{'paddingBottom':'5%'}}>
-              <Link to={"create"}>
-                <button className="btn btn-primary" >
-                  New
-                </button>
-              </Link>
+              <div className="col-1 text-white">
+                <i className="btn fas fa-bars" onClick={()=>{toggleDropDown();}}></i>
+              </div>
             </div>
-            <div className="row">
-              <span className="header-col col-2" onClick={()=>{props.sortTodos(sendSortType("ID",idClass));}}>
-                ID  <i className={idClass}></i>
-              </span>
-              <span className="header-col col" onClick={()=>{props.sortTodos(sendSortType("Title",titleClass));}}>
-                Title <i className={titleClass}></i>
-              </span>
-              <span className="header-col col-2" onClick={()=>{props.sortTodos(sendSortType("Date",dateClass));}}>
-                Due <i className={dateClass}></i>
-              </span>
-              <span className="header-col col-2" onClick={()=>{props.sortTodos(sendSortType("Created",createClass));}}>
-                Created <i className={createClass}></i>
-              </span>
-              <span className={"header-col col-1 "+favClass} onClick={()=>{props.filterFavTodo(!props.favFilterToggle);}}>
-                Fav 
-              </span>
-            </div>
+          </div> 
+              
+          <h2 style={{'padding':'5% 5%'}}>Todos</h2>
+          <div className="row" style={{'paddingBottom':'5%'}}>
+            <Link to={"create"}>
+              <button className="btn btn-primary" >
+                New
+              </button>
+            </Link>
+          </div>
+          <div className="row">
+            <span className="header-col col-2" onClick={()=>{props.sortTodos(sendSortType("ID",idClass));}}>
+              ID  <i className={idClass}></i>
+            </span>
+            <span className="header-col col" onClick={()=>{props.sortTodos(sendSortType("Title",titleClass));}}>
+              Title <i className={titleClass}></i>
+            </span>
+            <span className="header-col col-2" onClick={()=>{props.sortTodos(sendSortType("Date",dateClass));}}>
+              Due <i className={dateClass}></i>
+            </span>
+            <span className="header-col col-2" onClick={()=>{props.sortTodos(sendSortType("Created",createClass));}}>
+              Created <i className={createClass}></i>
+            </span>
+            <span className={"header-col col-1 "+favClass} onClick={()=>{props.filterFavTodo(!props.favFilterToggle);}}>
+              Fav 
+            </span>
+          </div>
             {displayTodos}
         </div>
     );

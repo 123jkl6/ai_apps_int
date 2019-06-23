@@ -10,6 +10,7 @@ import CreateTodo from './containers/CreateTodo';
 import { DisplayTodo } from './containers/DisplayTodo';
 import OneTodo from './containers/OneTodo';
 import Settings from './containers/settings';
+import Notifications from './containers/notifications';
 
 class App extends Component {
   constructor(props) {
@@ -60,6 +61,7 @@ class App extends Component {
                 </Route>
               <Route path="/todo/:id" render={(props)=><OneTodo todo={this.props.todoState.todos.find((el)=>el.id==props.match.params.id)} updateTodo={this.props.updateTodo.bind(this)} deleteTodo={this.props.deleteTodo.bind(this)}></OneTodo>}></Route>
               <Route path="/settings" render={(props)=><Settings></Settings>}></Route>
+              <Route path="/notifications" render={(props)=><Notifications></Notifications>}></Route>
             </Switch>
         </Router>
       </div>

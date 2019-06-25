@@ -65,6 +65,9 @@ class App extends Component {
               <Route path="/notifications" render={(props)=><Notifications notifications={this.props.todoState.notifications} updateNotification={this.props.updateNotification.bind(this)}></Notifications>}></Route>
             </Switch>
         </Router>
+        <div className="">
+          haha
+        </div>
       </div>
     );
   }

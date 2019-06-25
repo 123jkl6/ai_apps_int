@@ -23,7 +23,7 @@ class OneTodo extends React.Component {
     };
 
     goBack() {
-        this.props.history.push("/");
+        this.props.history.goBack();
     }
 
     handleStatusUpdate(event) {
@@ -99,13 +99,13 @@ class OneTodo extends React.Component {
                     <div className="modal-dialog" role="document">
                         <div className="modal-content custom-modal-content" id="deleteModal">
                         <div className="modal-header">
-                            <h5 className="modal-title">Modal title</h5>
+                            <h5 className="modal-title">Confirm</h5>
                             <button type="button" className="close"  aria-label="Close" onClick={()=>{this.closeConfirmDeleteModal();}}>
                             <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div className="modal-body">
-                            <p>Modal body text goes here.</p>
+                            <p>Are you sure you want to delete this todo?</p>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-danger" onClick={()=>{this.handleDeleteTodo();}}>DELETE</button>

@@ -33,7 +33,7 @@ if (localStorageState) {
     }
 }
 
-//set up notifications 
+//set up notifications when app starts
 initialState.notifications = setUpNotifications(initialState.todos, initialState.notifications);
 
 const reducer = (state = initialState, action) => {
@@ -51,15 +51,20 @@ const reducer = (state = initialState, action) => {
             console.log(displayTodos);
 
             let currentDate = (new Date()).toISOString().split("T")[0];
+
+            let newTodos = [...state.todos, {...newPayload,createDate: currentDate},];
             
+            //check if new todo is near due or past due
+            let notifications = setUpNotifications(newTodos, state.notifications);
+
             const newState = {
                 currentId: state.currentId + 1,
-                todos: [...state.todos, {...newPayload,createDate: currentDate},],
+                todos: newTodos,
                 //make this empty first, should come up with a more seamless way to integrate new todos into filtered ones
                 display: [],
                 searchTerm:state.searchTerm,
                 sortType:{...state.sortType},
-                notifications : [...state.notifications],
+                notifications : notifications,
                 lastValues: [...state.todos,],
                 favFilterToggle:state.favFilterToggle,
             };
@@ -108,16 +113,14 @@ const reducer = (state = initialState, action) => {
                 displayTodosID = state.display.map((el)=>{return el.id});
             }
             
-            // if (state.searchTerm) {
-            //     let searchTerm = state.searchTerm;
-            //     displayTodos = filterWithSearchTerm(searchTerm,newTodos);
-            // }
-            //update display
             let displayTodos = newTodos.filter((el)=>{return displayTodosID.includes(el.id);});
             console.log(displayTodos);
             //update notifications
+            let todoInNotification  =false;
             const updatedNotifications = state.notifications.map((el)=>{
                 if (el.id===newPayload.id){
+                    //found todo
+                    todoInNotification = true;
                     return {
                         id:newPayload.id,
                         title: newPayload.title,
@@ -132,6 +135,12 @@ const reducer = (state = initialState, action) => {
                     };
                 };
             });
+
+            //check if new due date or time is within half hour, or overdue
+            let notification = qualifyNotification(newPayload);
+            if (notification && !todoInNotification){
+                updatedNotifications.push(notification);
+            }
             const newState = {
                 currentId: state.currentId,
                 todos: [...newTodos],
@@ -205,17 +214,7 @@ const reducer = (state = initialState, action) => {
             } else {
                 displayTodo = [...state.todos];
             }
-            // if (sortType.sort=="Fav"){
-                
-            //     if (sortType.order=="YES"){
-            //         let newDisplayTodo = displayTodo.filter((el)=>{return el.favorite;});
-            //         displayTodo = newDisplayTodo;
-            //     } else {
-            //         //copy all
-            //         displayTodo = [...state.todos];
-            //     }
-                
-            // }
+            
             sortTodos(sortType,displayTodo);
 
             const newState = {
@@ -353,11 +352,11 @@ const sortTodos = (sortType,displayTodo) => {
         case "Title" : {
             if (sortType.order=="DESC"){
                 displayTodo.sort((a,b)=>{
-                    return (""+b.title).localeCompare(a.title);
+                    return (""+b.title.toUpperCase()).localeCompare(a.title.toUpperCase());
                 });
             } else {
                 displayTodo.sort((a,b)=>{
-                    return (""+a.title).localeCompare(b.title);
+                    return (""+a.title.toUpperCase()).localeCompare(b.title.toUpperCase());
                 });
             }
         }
@@ -392,9 +391,20 @@ function setUpNotifications (todos,oldNotifications) {
     const currentDateTime = new Date();
 
     for (let oneTodo of todos){
+        let oneTodoDate = new Date(oneTodo.date);
+        let oneTodoTimeStamp = new Date(
+            oneTodoDate.getFullYear(),
+            oneTodoDate.getMonth(),
+            oneTodoDate.getDate(),
+            oneTodoDate.getHours(),
+            oneTodoDate.getMinutes(),
+            0);
         if (
-            oneTodo.date<=currentDateTime.toISOString().split(" ")[0] && 
-            //TODO add a time check here as well. 
+            oneTodo.date<=currentDateTime.toISOString().split("T")[0] && 
+            //add only if it is past due
+            (oneTodo.date<=currentDateTime.toISOString().split("T")[0] && 
+            oneTodo.time <= (currentDateTime.getHours().toString()+currentDateTime.getMinutes().toString())
+            ) &&
             oneTodo.status != "Completed" &&
             !notifications.find((el)=>{return el.id === oneTodo.id})
             ){
@@ -407,10 +417,86 @@ function setUpNotifications (todos,oldNotifications) {
                 dismissed :false, //false by default
             };
             notifications.push(notification);
+        } else if (
+                    dueIn30Min(currentDateTime,oneTodoTimeStamp) &&
+                    oneTodo.status != "Completed" &&
+                    !notifications.find((el)=>{return el.id === oneTodo.id})
+                    ) {
+            const notification = {
+                id : oneTodo.id,
+                title: oneTodo.title,
+                date : oneTodo.date,
+                time :oneTodo.time,
+                status : oneTodo.status,
+                dismissed :false, //false by default
+            };
+            notifications.push(notification);
         }
     }
 
+    //ascending date
+    notifications.sort((a,b)=>{
+        return (new Date(a.date))-(new Date(b.date));
+    });
+
     return notifications;
+}
+
+function qualifyNotification(oneTodo){
+    const currentDateTime = new Date();
+    let oneTodoDate = new Date(oneTodo.date);
+    let oneTodoTimeStamp = new Date(
+        oneTodoDate.getFullYear(),
+        oneTodoDate.getMonth(),
+        oneTodoDate.getDate(),
+        oneTodoDate.getHours(),
+        oneTodoDate.getMinutes(),
+        0);
+    if (
+        oneTodo.date<=currentDateTime.toISOString().split("T")[0] && 
+        //add only if it is past due
+        (oneTodo.date<=currentDateTime.toISOString().split("T")[0] && 
+        oneTodo.time <= (currentDateTime.getHours().toString()+currentDateTime.getMinutes().toString())
+        ) &&
+        oneTodo.status != "Completed" 
+        //!notifications.find((el)=>{return el.id === oneTodo.id})
+        ){
+        const notification = {
+            id : oneTodo.id,
+            title: oneTodo.title,
+            date : oneTodo.date,
+            time :oneTodo.time,
+            status : oneTodo.status,
+            dismissed :false, //false by default
+        };
+        return notification;
+    } else if (
+                dueIn30Min(currentDateTime,oneTodoTimeStamp) &&
+                oneTodo.status != "Completed" 
+                //!notifications.find((el)=>{return el.id === oneTodo.id})
+                ) {
+        const notification = {
+            id : oneTodo.id,
+            title: oneTodo.title,
+            date : oneTodo.date,
+            time :oneTodo.time,
+            status : oneTodo.status,
+            dismissed :false, //false by default
+        };
+        return notification;
+    } else {
+        //default case
+        return null;
+    }
+}
+
+function dueIn30Min(firstTime,secondTime){
+    const halfHourInms = 30*60*1000; 
+    if (secondTime.getTime()-firstTime.getTime() <= halfHourInms){
+        return true; 
+    } else {
+        return false;
+    }
 }
 
 export default createStore(combineReducers({ reducer }));

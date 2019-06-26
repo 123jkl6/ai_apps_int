@@ -500,7 +500,7 @@ function qualifyNotification(oneTodo){
         };
         return notification;
     } else {
-        //default case
+        //default caseMenu
         return null;
     }
 }

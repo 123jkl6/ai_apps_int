@@ -322,7 +322,7 @@ const filterWithSearchTerm = (searchTerm,todoArr)=>{
         let added = false;
         if (oneTodo.title.toUpperCase().includes(searchTerm.toUpperCase())) {
             displayTodos.push({ ...oneTodo });
-            added = true;
+            added = true;Menu
         }
         console.log(displayTodos);
         for (var oneLabel of oneTodo.labels) {

@@ -1,7 +1,5 @@
 import { createStore, combineReducers, bindActionCreators } from 'redux';
 
-
-
 const initialState = {
     currentId: 1,
     todos: [],
@@ -341,6 +339,7 @@ const sortTodos = (sortType,displayTodo) => {
         case "ID" : {
             if (sortType.order=="DESC"){
                 displayTodo.sort((a,b)=>{
+                    console.log(b.id-a.id);
                     return b.id-a.id;
                 });
             } else {
@@ -348,17 +347,31 @@ const sortTodos = (sortType,displayTodo) => {
                     return a.id-b.id;
                 });
             }
+            break;
         }
         case "Title" : {
             if (sortType.order=="DESC"){
                 displayTodo.sort((a,b)=>{
-                    return (""+b.title.toUpperCase()).localeCompare(a.title.toUpperCase());
+                    if(b.title.toUpperCase()>a.title.toUpperCase()) {
+                        return 1;
+                    } 
+                    if (b.title.toUpperCase()<a.title.toUpperCase()){
+                        return -1;
+                    }
+                    return 0;
                 });
             } else {
                 displayTodo.sort((a,b)=>{
-                    return (""+a.title.toUpperCase()).localeCompare(b.title.toUpperCase());
+                    if (b.title.toUpperCase()>a.title.toUpperCase()) {
+                        return -1;
+                    } 
+                    if (b.title.toUpperCase()<a.title.toUpperCase()){
+                        return 1;
+                    }
+                    return 0;
                 });
             }
+            break;
         }
         case "Date" : {
             if (sortType.order=="DESC"){
@@ -370,6 +383,7 @@ const sortTodos = (sortType,displayTodo) => {
                     return (new Date(a.date))-(new Date(b.date));
                 });
             }
+            break;
         }
         case "Created" : {
             if (sortType.order=="DESC"){
@@ -381,6 +395,7 @@ const sortTodos = (sortType,displayTodo) => {
                     return (new Date(a.createDate))-(new Date(b.createDate));
                 });
             }
+            break;
         }
     }
     console.log(displayTodo);

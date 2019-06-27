@@ -322,7 +322,7 @@ const filterWithSearchTerm = (searchTerm,todoArr)=>{
         let added = false;
         if (oneTodo.title.toUpperCase().includes(searchTerm.toUpperCase())) {
             displayTodos.push({ ...oneTodo });
-            added = true;Menu
+            added = true;
         }
         console.log(displayTodos);
         for (var oneLabel of oneTodo.labels) {
@@ -500,7 +500,7 @@ function qualifyNotification(oneTodo){
         };
         return notification;
     } else {
-        //default caseMenu
+        //default case
         return null;
     }
 }

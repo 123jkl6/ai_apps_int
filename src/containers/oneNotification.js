@@ -35,7 +35,7 @@ export const OneNotification = (props) => {
 
     return (
         <div className={"row border border-primary margin-m5 header-col align-items-center "+notificationStyle} onClick={gotoTodo} > 
-            <div className="col-10">
+            <div className="col-9 col-md-10">
                 <div className={"row align-items-end "+dismissHeaderStyle}>
                 <div className="col">Title</div>
                     <div className="col">Due Date</div>
@@ -51,7 +51,7 @@ export const OneNotification = (props) => {
                 </div>
             </div>
             
-            <div className="col-2">
+            <div className="col-3 col-md-2">
                 <button type="button" className={dismissButtonStyle} id={"dismiss"+props.todo.id} onClick={()=>{updateNotification();}}>
                     {dismissButtonText}
                 </button>

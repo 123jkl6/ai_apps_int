@@ -17,30 +17,22 @@ class App extends Component {
   constructor(props) {
     super(props);
     console.log(props);
-
+    const undismissedNotifications = props.todoState.notifications.filter((el)=>{return !el.dismissed});
     this.state = {
       createToDo: false,
       editTodo: null,
       displayTodos:props.todoState.todos,
       searchInput:"",
+      showNotifications:undismissedNotifications.length>0,
+      undismissedNotifications:undismissedNotifications,
     }
-
-    //this.handleSearchInput = this.handleSearchInput.bind(this);
-    //this.triggerEdit = this.triggerEdit.bind(this);
-    //this.showCreateTodoModal = this.showCreateTodoModal.bind(this);
+    this.closeNotifications = this.closeNotifications.bind(this); 
   }
-
-
-
 
   render() {
     return (
       <div className="">
         <Router history={history}>
-          {this.state.createTodo ? <CreateTodo updateTodo={this.props.updateTodo.bind(this)} addTodo={this.props.addTodo.bind(this)} editTodo={this.state.editTodo} closeTodo={this.closeCreateTodoModal.bind(this)} /> : null}
-
-          {this.state.currentId}
-          
             <Switch>
               <Route exact path="/">
                 <DisplayTodo 
@@ -64,10 +56,27 @@ class App extends Component {
               <Route path="/settings" render={(props)=><Settings></Settings>}></Route>
               <Route path="/notifications" render={(props)=><Notifications notifications={this.props.todoState.notifications} updateNotification={this.props.updateNotification.bind(this)}></Notifications>}></Route>
             </Switch>
+            {this.state.showNotifications?
+            <div id="notificationAlert" className="notification-alert bg-info">
+              <div className="container">
+                <div className="row padding-p5">
+                  <div className="col d-none d-md-block"></div>
+                  <div className="col"><Link className="text-white h3" to={"/notifications"}>Notifications</Link></div>
+                  <div className="col d-none d-md-block"></div>
+                  <div className="col-2 header-col text-white h3" onClick={this.closeNotifications}>&times;</div>
+                </div>
+                <div className="row padding-p5">
+                  <div className="col-1"></div>
+                  <div className="col">
+                    You have <span className="text-light">{this.state.undismissedNotifications.length}</span> new reminders.
+                  </div>
+                  <div className="col-1"></div>
+                </div>
+              </div>
+            </div>
+              :null}
         </Router>
-        <div className="">
-          haha
-        </div>
+        
       </div>
     );
   }
@@ -76,54 +85,14 @@ class App extends Component {
     console.log('componentDidMount()');
     console.log(this.state);
     console.log(this.props.store);
+    setTimeout(()=>{
+      document.getElementById("notificationAlert").classList.toggle("show-alert");
+    },100);
   }
 
-  // editTodo(todo) {
-  //   this.showCreateTodoModal();
-  //   this.setState({ editTodo: todo });
-  // }
-
-  // showCreateTodoModal() {
-  //   this.setState({ createTodo: true }); 
-  // }
-
-  // closeCreateTodoModal() {
-  //   this.setState({ createTodo: false, editTodo:null });
-  // }
-
-  // handleSearchInput (event) {
-  //   const input = event.target.value;
-  //   console.log(input);
-  //   this.setState({searchInput:input});
-  //   if empty string or input does not contain at least 2 characters, show all and stop execution. 
-  //   const trimmedInput = input.trim();
-  //   if (!trimmedInput || trimmedInput.length<2){
-  //     this.setState({displayTodos:[...this.props.todoState.todos]});
-  //     return;
-  //   }
-
-  //   const displayTodos = [];
-  //   for (var oneTodo of this.props.todoState.todos){
-  //     let added = false;
-  //     if (oneTodo.title.includes(trimmedInput) || oneTodo.summary.includes(trimmedInput)){
-  //       displayTodos.push({...oneTodo});
-  //       added = true;
-  //     }
-
-  //     for (var oneLabel of oneTodo.labels){
-  //       if (oneLabel.includes(trimmedInput) && !added){
-  //         displayTodos.push({...oneTodo});
-  //       }
-  //     }
-  //   }
-  //   console.log(displayTodos);
-  //   this.setState({displayTodos:displayTodos});
-  //   this.props.filterTodo(input.trim());
-  // }
-
-//   triggerEdit(todo) {
-//     this.setState({ createTodo: true,editTodo:{...todo} });
-//   }
+  closeNotifications(){
+    this.setState({showNotifications:false});
+  }
  }
 
 

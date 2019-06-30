@@ -4,3 +4,10 @@ export function updateNotification(notification) {
         payload:notification,
     }; 
 }
+
+export function checkNotication(check){
+    return {
+        type:"CHECK_NOTIFICATION",
+        payload:check,
+    };
+}

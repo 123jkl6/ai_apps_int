@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import history from './history';
 import { addTodo, updateTodo, deleteTodo, filterTodo, sortTodos, filterFavTodo } from './actions/todoActions';
-import { updateNotification } from './actions/notificationsActions';
+import { updateNotification, checkNotication } from './actions/notificationsActions';
 import CreateTodo from './containers/CreateTodo';
 import { DisplayTodo } from './containers/DisplayTodo';
 import OneTodo from './containers/OneTodo';
@@ -17,14 +17,18 @@ class App extends Component {
   constructor(props) {
     super(props);
     console.log(props);
-    const undismissedNotifications = props.todoState.notifications.filter((el)=>{return !el.dismissed});
+
+    //check every minute for tasks that are due in 30 min
+    const checkForDueInterval = setInterval(()=>{
+      props.checkNotication("CHECK_DUE");
+    }, 60 * 1000);
+    
     this.state = {
       createToDo: false,
       editTodo: null,
       displayTodos:props.todoState.todos,
       searchInput:"",
-      showNotifications:undismissedNotifications.length>0,
-      undismissedNotifications:undismissedNotifications,
+      checkForDueInterval: checkForDueInterval,
     }
     this.closeNotifications = this.closeNotifications.bind(this); 
   }
@@ -56,19 +60,22 @@ class App extends Component {
               <Route path="/settings" render={(props)=><Settings></Settings>}></Route>
               <Route path="/notifications" render={(props)=><Notifications notifications={this.props.todoState.notifications} updateNotification={this.props.updateNotification.bind(this)}></Notifications>}></Route>
             </Switch>
-            {this.state.showNotifications?
+            {this.props.todoState.showNotifications?
             <div id="notificationAlert" className="notification-alert bg-info">
               <div className="container">
-                <div className="row padding-p5">
-                  <div className="col d-none d-md-block"></div>
-                  <div className="col"><Link className="text-white h3" to={"/notifications"}>Notifications</Link></div>
-                  <div className="col d-none d-md-block"></div>
-                  <div className="col-2 header-col text-white h3" onClick={this.closeNotifications}>&times;</div>
+                <div className="row">
+                  <div className="col"></div>
+                <div className="col-2 header-col text-white h3" onClick={this.closeNotifications}>&times;</div>
                 </div>
                 <div className="row padding-p5">
+                  <div className="col d-none d-md-block"></div>
+                  <div className="col"><Link className="text-white h4" to={"/notifications"}>Notifications</Link></div>
+                  <div className="col d-none d-md-block"></div>
+                </div>
+                <div className="row">
                   <div className="col-1"></div>
                   <div className="col">
-                    You have <span className="text-light">{this.state.undismissedNotifications.length}</span> new reminders.
+                    You have <span className="text-light">{this.props.todoState.notifications.filter((el)=>{return !el.dismissed}).length}</span> new reminders.
                   </div>
                   <div className="col-1"></div>
                 </div>
@@ -76,7 +83,6 @@ class App extends Component {
             </div>
               :null}
         </Router>
-        
       </div>
     );
   }
@@ -90,12 +96,15 @@ class App extends Component {
     },100);
   }
 
+  componentWillUnmount(){
+    clearInterval(this.state.checkForDueInterval);
+    this.setState({checkForDueInterval:undefined});
+  }
+
   closeNotifications(){
-    this.setState({showNotifications:false});
+    this.props.checkNotication("CLOSE_NOTIFICATION");
   }
  }
-
-
 
 const mapStateToProps = (state) => {
   console.log(state);
@@ -130,6 +139,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     updateNotification : (notification) => {
       dispatch(updateNotification(notification));
+    },
+    checkNotication : (check) => {
+      dispatch(checkNotication(check));
     },
   };
 

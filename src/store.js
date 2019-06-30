@@ -12,6 +12,7 @@ const initialState = {
     },
     notifications : [],
     favFilterToggle:false,
+    showNotifications:false,
 };
 
 console.log('creating store');
@@ -33,6 +34,9 @@ if (localStorageState) {
 
 //set up notifications when app starts
 initialState.notifications = setUpNotifications(initialState.todos, initialState.notifications);
+initialState.showNotifications = initialState.notifications
+    .filter((el)=>{return !el.dismissed})
+    .length>0?true:false;
 
 const reducer = (state = initialState, action) => {
     console.log(state);
@@ -65,6 +69,7 @@ const reducer = (state = initialState, action) => {
                 notifications : notifications,
                 lastValues: [...state.todos,],
                 favFilterToggle:state.favFilterToggle,
+                showNotifications : state.showNotifications,
             };
             localStorage.setItem('todoState', JSON.stringify(newState));
             return newState;
@@ -136,8 +141,10 @@ const reducer = (state = initialState, action) => {
 
             //check if new due date or time is within half hour, or overdue
             let notification = qualifyNotification(newPayload);
+            let showNotifications = state.showNotifications;
             if (notification && !todoInNotification){
                 updatedNotifications.push(notification);
+                showNotifications = true;
             }
             const newState = {
                 currentId: state.currentId,
@@ -148,6 +155,7 @@ const reducer = (state = initialState, action) => {
                 notifications : updatedNotifications,
                 lastValues: [...state.todos,],
                 favFilterToggle:state.favFilterToggle,
+                showNotifications : showNotifications,
             };
             //persist to localStorage first
             localStorage.setItem('todoState', JSON.stringify(newState));
@@ -180,6 +188,7 @@ const reducer = (state = initialState, action) => {
                 notifications : [...state.notifications],
                 lastValues: [...state.todos,],
                 favFilterToggle:state.favFilterToggle,
+                showNotifications : state.showNotifications,
             };
             localStorage.setItem('todoState', JSON.stringify(newState));
             return newState;
@@ -200,6 +209,7 @@ const reducer = (state = initialState, action) => {
                 notifications : [...state.notifications],
                 lastValues: [...state.todos,],
                 favFilterToggle:state.favFilterToggle,
+                showNotifications : state.showNotifications,
             };
 
             return newState;
@@ -224,6 +234,7 @@ const reducer = (state = initialState, action) => {
                 notifications : [...state.notifications],
                 lastValues: [...state.todos,],
                 favFilterToggle:state.favFilterToggle,
+                showNotifications : state.showNotifications,
             }
 
             return newState;
@@ -266,6 +277,7 @@ const reducer = (state = initialState, action) => {
                 lastValues: [...state.todos,],
                 notifications:[...state.notifications],
                 favFilterToggle:action.payload,
+                showNotifications : state.showNotifications,
             }
 
             return newState;
@@ -276,7 +288,7 @@ const reducer = (state = initialState, action) => {
 
             for (let oneNotification of state.notifications){
                 if (payload.id===oneNotification.id){
-                    //push the new payload
+                    //push the new payload that dismissed the notification 
                     updatedNotifications.push({
                         ...payload
                     });
@@ -297,7 +309,45 @@ const reducer = (state = initialState, action) => {
                 notifications : updatedNotifications,
                 lastValues: [...state.todos,],
                 favFilterToggle:state.favFilterToggle,
+                showNotifications : state.showNotifications,
             }
+            localStorage.setItem('todoState', JSON.stringify(newState));
+            return newState;
+        }
+        case "CHECK_NOTIFICATION" :{
+            const payload = action.payload;
+            console.log(payload);
+            if (payload=="CHECK_DUE"){
+                //do nothing and continue
+            } else if ("CLOSE_NOTIFICATION"){
+                return {
+                    currentId: state.currentId,
+                    todos: [...state.todos],
+                    display: [...state.display],
+                    searchTerm: state.searchTerm,
+                    sortType:{...state.sortType},
+                    notifications : [...state.notifications],
+                    lastValues: [...state.todos,],
+                    favFilterToggle:state.favFilterToggle,
+                    showNotifications : false,
+                };
+            } else {
+                //stop execution, no change in state
+                return state;
+            }
+            const updatedNotifications = setUpNotifications(state.todos, state.notifications);
+            const showNotifications = updatedNotifications.length>state.notifications.length?true:false;
+            const newState = {
+                currentId: state.currentId,
+                todos: [...state.todos],
+                display: [...state.display],
+                searchTerm: state.searchTerm,
+                sortType:{...state.sortType},
+                notifications : updatedNotifications,
+                lastValues: [...state.todos,],
+                favFilterToggle:state.favFilterToggle,
+                showNotifications : showNotifications,
+            };
             localStorage.setItem('todoState', JSON.stringify(newState));
             return newState;
         }
@@ -409,7 +459,7 @@ function setUpNotifications (todos,oldNotifications) {
         let oneTodoDate = new Date(oneTodo.date);
         let oneTodoTimeStamp = new Date(
             oneTodoDate.getFullYear(),
-            oneTodoDate.getMonth(),
+            oneTodoDate.getMonth()-1,
             oneTodoDate.getDate(),
             oneTodoDate.getHours(),
             oneTodoDate.getMinutes(),
@@ -423,6 +473,7 @@ function setUpNotifications (todos,oldNotifications) {
             oneTodo.status != "Completed" &&
             !notifications.find((el)=>{return el.id === oneTodo.id})
             ){
+            console.log("overdue");
             const notification = {
                 id : oneTodo.id,
                 title: oneTodo.title,
@@ -437,6 +488,7 @@ function setUpNotifications (todos,oldNotifications) {
                     oneTodo.status != "Completed" &&
                     !notifications.find((el)=>{return el.id === oneTodo.id})
                     ) {
+            console.log("due in 30 min");
             const notification = {
                 id : oneTodo.id,
                 title: oneTodo.title,
@@ -462,7 +514,7 @@ function qualifyNotification(oneTodo){
     let oneTodoDate = new Date(oneTodo.date);
     let oneTodoTimeStamp = new Date(
         oneTodoDate.getFullYear(),
-        oneTodoDate.getMonth(),
+        oneTodoDate.getMonth()-1,
         oneTodoDate.getDate(),
         oneTodoDate.getHours(),
         oneTodoDate.getMinutes(),
@@ -476,6 +528,7 @@ function qualifyNotification(oneTodo){
         oneTodo.status != "Completed" 
         //!notifications.find((el)=>{return el.id === oneTodo.id})
         ){
+        console.log("overdue");
         const notification = {
             id : oneTodo.id,
             title: oneTodo.title,
@@ -490,6 +543,7 @@ function qualifyNotification(oneTodo){
                 oneTodo.status != "Completed" 
                 //!notifications.find((el)=>{return el.id === oneTodo.id})
                 ) {
+        console.log("due in 30min");
         const notification = {
             id : oneTodo.id,
             title: oneTodo.title,

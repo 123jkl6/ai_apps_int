@@ -100,6 +100,9 @@ export const DisplayTodo = (props) => {
   const toggleDropDown = () => {
     document.getElementById("menu").classList.toggle("menu-close");
     document.getElementById("nav-icon1").classList.toggle("open");
+    document.getElementById("notificationsLink").classList.toggle("d-none");
+    document.getElementById("search").classList.toggle("d-none");
+    document.getElementsByTagName("body")[0].classList.toggle("modal-open");
   }
 
   for (var todoIdx in props.todos) {
@@ -131,7 +134,7 @@ export const DisplayTodo = (props) => {
             <input id="search" className="form-control" placeholder="Search" onChange={() => { props.filterTodo(document.getElementById("search").value) }} />
           </div>
           <div className="col-1">
-            <Link to={"/notifications"} className="text-white">
+            <Link id="notificationsLink" to={"/notifications"} className="text-white">
               <span className="btn fas fa-bell fa-2x"></span>
             </Link>
 

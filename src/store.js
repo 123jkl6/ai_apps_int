@@ -2,6 +2,7 @@ import { createStore, combineReducers, bindActionCreators } from 'redux';
 
 const initialState = {
     currentId: 1,
+    newTodoId:undefined,
     todos: [],
     lastValues: [],
     display:[],
@@ -62,6 +63,7 @@ const reducer = (state = initialState, action) => {
             const newState = {
                 currentId: state.currentId + 1,
                 todos: newTodos,
+                newTodoId:newPayload.id,
                 //make this empty first, should come up with a more seamless way to integrate new todos into filtered ones
                 display: [],
                 searchTerm:state.searchTerm,
@@ -349,6 +351,22 @@ const reducer = (state = initialState, action) => {
                 showNotifications : showNotifications,
             };
             localStorage.setItem('todoState', JSON.stringify(newState));
+            return newState;
+        }
+        case "ACKNOWLEDGE_NEW_TODO" : {
+            
+            const newState = {
+                currentId: state.currentId,
+                todos: [...state.todos],
+                newTodoId:undefined,
+                display: [...state.display],
+                searchTerm: state.searchTerm,
+                sortType:{...state.sortType},
+                notifications : [...state.notifications],
+                lastValues: [...state.todos,],
+                favFilterToggle:state.favFilterToggle,
+                showNotifications : state.showNotifications,
+            };
             return newState;
         }
         default: {

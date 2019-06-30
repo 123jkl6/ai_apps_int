@@ -39,3 +39,10 @@ export function filterFavTodo(fav){
         payload:fav,
     };
 }
+
+export function acknowledgeNewTodo(ack){
+    return {
+        type:"ACKNOWLEDGE_NEW_TODO",
+        payload:ack,
+    };
+}

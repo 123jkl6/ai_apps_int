@@ -5,7 +5,7 @@ import './App.css';
 import { connect } from 'react-redux';
 
 import history from './history';
-import { addTodo, updateTodo, deleteTodo, filterTodo, sortTodos, filterFavTodo } from './actions/todoActions';
+import { addTodo, updateTodo, deleteTodo, filterTodo, sortTodos, filterFavTodo, acknowledgeNewTodo } from './actions/todoActions';
 import { updateNotification, checkNotication } from './actions/notificationsActions';
 import CreateTodo from './containers/CreateTodo';
 import { DisplayTodo } from './containers/DisplayTodo';
@@ -31,6 +31,7 @@ class App extends Component {
       checkForDueInterval: checkForDueInterval,
     }
     this.closeNotifications = this.closeNotifications.bind(this); 
+    this.closeNewTodoAlert = this.closeNewTodoAlert.bind(this);
   }
 
   render() {
@@ -60,6 +61,27 @@ class App extends Component {
               <Route path="/settings" render={(props)=><Settings></Settings>}></Route>
               <Route path="/notifications" render={(props)=><Notifications notifications={this.props.todoState.notifications} updateNotification={this.props.updateNotification.bind(this)}></Notifications>}></Route>
             </Switch>
+            
+            {this.props.todoState.newTodoId ? 
+              <div className="new-alert alert-success">
+                <div className="row">
+                  <div className="col-10"></div>
+                  <div className="col-2 header-col" onClick={this.closeNewTodoAlert}>
+                    <span>&times;</span>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-1"></div>
+                  <div className="col">
+                    You have just created a new todo. Click <Link onClick={this.closeNewTodoAlert} to={"/todo/"+this.props.todoState.newTodoId}>here</Link> to view it.
+                  </div>
+                  <div className="col-1"></div>
+                </div>
+              
+              </div>
+              :null}
+            
+
             {this.props.todoState.showNotifications?
             <div id="notificationAlert" className="notification-alert bg-info">
               <div className="container">
@@ -104,6 +126,10 @@ class App extends Component {
   closeNotifications(){
     this.props.checkNotication("CLOSE_NOTIFICATION");
   }
+
+  closeNewTodoAlert(){
+    this.props.acknowledgeNewTodo(undefined);
+  }
  }
 
 const mapStateToProps = (state) => {
@@ -142,6 +168,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     checkNotication : (check) => {
       dispatch(checkNotication(check));
+    },
+    acknowledgeNewTodo : (ack) => {
+      dispatch(acknowledgeNewTodo(ack));
     },
   };
 
